@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type MouseEvent, type ReactNode } from "react";
+import { useId, useState, type FormEvent, type MouseEvent, type ReactNode } from "react";
 import alertsData from "../data/price-alerts.json";
 import audit from "../data/audit.json";
 import config from "../data/config.json";
@@ -431,21 +431,49 @@ function Pricing() {
   );
 }
 
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  const panelId = useId();
+  return (
+    <div className="px-5">
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between gap-4 py-4 text-left font-semibold"
+      >
+        {q}
+        <span
+          aria-hidden
+          className={`text-accent text-xl transition-transform duration-300 motion-reduce:transition-none ${open ? "rotate-45" : ""}`}
+        >
+          +
+        </span>
+      </button>
+      <div
+        id={panelId}
+        role="region"
+        aria-hidden={!open}
+        className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out motion-reduce:transition-none ${
+          open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <p className="pb-4 text-muted">{a.replace("{price}", priceLabel)}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Faq() {
   return (
     <Section id="faq">
       <SectionHead title={m.faq.title} />
       <div className="max-w-3xl divide-y divide-line rounded-xl border border-line bg-surface">
         {m.faq.items.map((f) => (
-          <details key={f.q} className="group px-5 py-4">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">
-              {f.q}
-              <span aria-hidden className="text-accent text-xl group-open:rotate-45 transition-transform">
-                +
-              </span>
-            </summary>
-            <p className="mt-3 text-muted">{f.a.replace("{price}", priceLabel)}</p>
-          </details>
+          <FaqItem key={f.q} q={f.q} a={f.a} />
         ))}
       </div>
     </Section>

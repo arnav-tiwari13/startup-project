@@ -1,0 +1,12 @@
+{
+  "name": "Cedar Lane Smokehouse",
+  "location": "Austin, TX",
+  "type": "Counter-service barbecue with Tex-Mex specials",
+  "locations": 1,
+  "annualSales": 1200000,
+  "monthlySales": 100000,
+  "pos": "Toast",
+  "vendors": ["Sysco", "US Foods", "Local produce"],
+  "foodCost": { "actualPct": 36.5, "theoreticalPct": 33.0, "targetPct": 33.0 },
+  "weekLabel": "Week of Oct 12-18"
+}

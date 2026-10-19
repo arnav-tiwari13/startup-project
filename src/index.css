@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f6f3ee;
+  --surface: #ffffff;
+  --ink: #1c1917;
+  --muted: #5c554f;
+  --line: #e4dfd8;
+  --accent: #9a3412;
+  --good: #166534;
+  --watch: #a16207;
+  --bad: #b91c1c;
+  --good-bg: #dcfce7;
+  --watch-bg: #fef3c7;
+  --bad-bg: #fee2e2;
+  --bubble: #e9e9eb;
+  --bubble-ink: #111111;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14110f;
+    --surface: #1f1b18;
+    --ink: #f5f1ec;
+    --muted: #b2aaa2;
+    --line: #38322d;
+    --accent: #fb923c;
+    --good: #86efac;
+    --watch: #fcd34d;
+    --bad: #fca5a5;
+    --good-bg: #14331f;
+    --watch-bg: #3a2c0a;
+    --bad-bg: #3d1616;
+    --bubble: #2c2c2e;
+    --bubble-ink: #f2f2f2;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-good: var(--good);
+  --color-watch: var(--watch);
+  --color-bad: var(--bad);
+  --color-good-bg: var(--good-bg);
+  --color-watch-bg: var(--watch-bg);
+  --color-bad-bg: var(--bad-bg);
+  --color-bubble: var(--bubble);
+  --color-bubble-ink: var(--bubble-ink);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}

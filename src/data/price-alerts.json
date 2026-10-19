@@ -1,0 +1,9 @@
+{
+  "thresholdPct": 5,
+  "alerts": [
+    { "item": "Limes (case)", "vendor": "Local produce", "lastWeek": 24.0, "thisWeek": 27.0, "affects": ["Chopped brisket tacos"], "action": "Ask the produce vendor for a price hold, or swap to half the lime wedges per taco order." },
+    { "item": "Brisket, whole packer (lb)", "vendor": "Sysco", "lastWeek": 5.49, "thisWeek": 5.98, "affects": ["Brisket plate", "Brisket sandwich", "Chopped brisket tacos"], "action": "Raise the brisket plate $1 (to $25) or hold portions to 8 oz." },
+    { "item": "Takeout containers (case)", "vendor": "US Foods", "lastWeek": 48.0, "thisWeek": 51.36, "affects": ["Every takeout order"], "action": "Get a quote from a packaging vendor before the next order." },
+    { "item": "Cheddar, shredded (lb)", "vendor": "US Foods", "lastWeek": 3.1, "thisWeek": 3.29, "affects": ["Mac and cheese (side)", "Brisket plate"], "action": "Ask US Foods about a lower-priced cheddar blend." }
+  ]
+}

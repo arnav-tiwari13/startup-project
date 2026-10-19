@@ -1,0 +1,11 @@
+{
+  "headline": "You're spending about 3.5 points more on food than your recipes say you should.",
+  "savingsRange": { "lowPct": 1.5, "highPct": 2.0 },
+  "leaks": [
+    { "rank": 1, "leak": "Brisket price up 9% at Sysco over 6 weeks; plate price unchanged", "monthly": 620 },
+    { "rank": 2, "leak": "Brisket plates averaging 9.2 oz vs the 8 oz spec", "monthly": 540 },
+    { "rank": 3, "leak": "Unsold ribs thrown out at end of day, mostly Saturdays", "monthly": 310 },
+    { "rank": 4, "leak": "Short deliveries and vendor credits never claimed", "monthly": 180 },
+    { "rank": 5, "leak": "Cheddar price up 14% since August (mac and cheese)", "monthly": 150 }
+  ]
+}

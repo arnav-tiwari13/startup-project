@@ -7,3 +7,6 @@
 .fseventsd
 .TemporaryItems
 .DocumentRevisions-V100
+node_modules
+dist
+*.log

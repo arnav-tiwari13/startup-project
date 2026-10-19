@@ -1,0 +1,33 @@
+{
+  "thresholds": { "problemAbovePct": 38, "watchAbovePct": 34 },
+  "dishes": [
+    {
+      "id": "brisket-plate", "name": "Brisket plate (8 oz + 2 sides)", "price": 24.0, "costPerPlate": 10.1, "soldPerWeek": 310,
+      "recipe": [
+        { "item": "Brisket, sliced (8 oz cooked)", "amount": "8 oz", "cost": 6.23 },
+        { "item": "Mac and cheese (side)", "amount": "1 portion", "cost": 1.45 },
+        { "item": "Coleslaw (side)", "amount": "1 portion", "cost": 0.62 },
+        { "item": "White bread", "amount": "2 slices", "cost": 0.22 },
+        { "item": "Pickles and onions", "amount": "1 oz", "cost": 0.3 },
+        { "item": "BBQ sauce", "amount": "2 oz", "cost": 0.4 },
+        { "item": "Tray, paper and utensils", "amount": "1 set", "cost": 0.88 }
+      ]
+    },
+    {
+      "id": "brisket-sandwich", "name": "Brisket sandwich", "price": 15.0, "costPerPlate": 5.85, "soldPerWeek": 220,
+      "recipe": [
+        { "item": "Brisket, chopped (4 oz cooked)", "amount": "4 oz", "cost": 3.12 },
+        { "item": "Bun", "amount": "1", "cost": 0.68 },
+        { "item": "Pickles and onions", "amount": "1 oz", "cost": 0.3 },
+        { "item": "BBQ sauce", "amount": "1 oz", "cost": 0.2 },
+        { "item": "Wrap and bag", "amount": "1 set", "cost": 1.55 }
+      ]
+    },
+    { "id": "ribs-half", "name": "Ribs, half rack", "price": 26.0, "costPerPlate": 9.4, "soldPerWeek": 180, "recipe": [] },
+    { "id": "brisket-tacos", "name": "Chopped brisket tacos", "price": 14.0, "costPerPlate": 4.6, "soldPerWeek": 150, "recipe": [] },
+    { "id": "mac-cheese", "name": "Mac and cheese (side)", "price": 5.0, "costPerPlate": 1.45, "soldPerWeek": 400, "recipe": [] },
+    { "id": "pulled-pork", "name": "Pulled pork plate", "price": 18.0, "costPerPlate": 5.2, "soldPerWeek": 190, "recipe": [] },
+    { "id": "sausage-plate", "name": "Sausage plate", "price": 17.0, "costPerPlate": 4.9, "soldPerWeek": 140, "recipe": [] },
+    { "id": "banana-pudding", "name": "Banana pudding", "price": 6.0, "costPerPlate": 1.1, "soldPerWeek": 260, "recipe": [] }
+  ]
+}

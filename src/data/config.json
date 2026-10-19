@@ -1,0 +1,9 @@
+{
+  "productName": "[Product Name]",
+  "demoLabel": "Demo: sample data",
+  "contact": {
+    "name": "Arnav",
+    "line": "Your contact: Arnav, texts answered same day."
+  },
+  "coreOffer": "Start Core: $500/month, cancel anytime."
+}

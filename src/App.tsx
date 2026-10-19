@@ -4,6 +4,7 @@ import WeeklyReport from "./screens/WeeklyReport";
 import MenuMargins from "./screens/MenuMargins";
 import AuditResult from "./screens/AuditResult";
 import PriceAlerts from "./screens/PriceAlerts";
+import InvoiceCapture from "./screens/InvoiceCapture";
 import Placeholder from "./screens/Placeholder";
 import restaurant from "./data/restaurant.json";
 
@@ -12,7 +13,7 @@ const SCREENS: Record<Exclude<Route, "home">, { title: string; element: () => Re
   margins: { title: "Menu margins", element: MenuMargins },
   audit: { title: "Free audit result", element: AuditResult },
   alerts: { title: "Price alerts", element: PriceAlerts },
-  invoice: { title: "Invoice capture", element: Placeholder },
+  invoice: { title: "Invoice capture", element: InvoiceCapture },
 };
 
 export default function App() {

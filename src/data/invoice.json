@@ -1,5 +1,5 @@
 {
-  "vendor": "Sample Foodservice Co. (Sysco-style invoice)",
+  "vendor": "Sample Foodservice Co.",
   "invoiceNumber": "INV-48213",
   "date": "Oct 14",
   "steps": [
@@ -8,10 +8,39 @@
     "A person checks every line"
   ],
   "lines": [
-    { "item": "Beef brisket, whole packer", "quantity": 120, "unit": "lb", "unitPrice": 5.98, "flag": "price-increase", "note": "Up 8.9% vs last week ($5.49)." },
-    { "item": "Pork butt, bone-in", "quantity": 1, "unit": "case", "unitPrice": 142.8, "flag": "short", "note": "Ordered 2 cases of pork butt, received 1. Credit requested: $142.80." },
-    { "item": "Yellow onions, 50 lb", "quantity": 2, "unit": "bag", "unitPrice": 31.5, "flag": null, "note": "" },
-    { "item": "Fry oil, 35 lb", "quantity": 3, "unit": "jug", "unitPrice": 44.25, "flag": null, "note": "" }
+    {
+      "item": "Beef brisket, whole packer",
+      "quantity": 120,
+      "unit": "lb",
+      "unitPrice": 5.98,
+      "flag": "price-increase",
+      "alertItem": "Brisket, whole packer (lb)"
+    },
+    {
+      "item": "Pork butt, bone-in",
+      "quantity": 1,
+      "unit": "case",
+      "unitPrice": 142.8,
+      "flag": "short",
+      "orderedQuantity": 2,
+      "unitLabel": "cases of pork butt"
+    },
+    {
+      "item": "Yellow onions, 50 lb",
+      "quantity": 2,
+      "unit": "bag",
+      "unitPrice": 31.5,
+      "flag": null
+    },
+    {
+      "item": "Fry oil, 35 lb",
+      "quantity": 3,
+      "unit": "jug",
+      "unitPrice": 44.25,
+      "flag": null
+    }
   ],
-  "verifiedBadge": "Verified by Arnav, Oct 14"
+  "verifiedBadge": "Verified by Arnav, Oct 14",
+  "billTo": "Cedar Lane Smokehouse",
+  "billToLocation": "Austin, TX"
 }

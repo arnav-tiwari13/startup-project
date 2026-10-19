@@ -34,9 +34,9 @@ function Anchor({ id, className, children }: { id: string; className?: string; c
   );
 }
 
-function Section({ id, tone, children }: { id?: string; tone?: "alt"; children: ReactNode }) {
+function Section({ id, tone, tight, children }: { id?: string; tone?: "alt"; tight?: boolean; children: ReactNode }) {
   return (
-    <section id={id} className={`scroll-mt-16 py-16 sm:py-20 ${tone === "alt" ? "bg-surface border-y border-line" : ""}`}>
+    <section id={id} className={`scroll-mt-16 ${tight ? "py-10" : "py-12 sm:py-16"} ${tone === "alt" ? "bg-surface border-y border-line" : ""}`}>
       <div className="mx-auto max-w-6xl px-4 sm:px-8">{children}</div>
     </section>
   );
@@ -44,7 +44,7 @@ function Section({ id, tone, children }: { id?: string; tone?: "alt"; children: 
 
 function SectionHead({ title, sub }: { title: string; sub?: string }) {
   return (
-    <div className="max-w-2xl mb-10">
+    <div className="max-w-2xl mb-8">
       <h2 className="text-3xl sm:text-4xl font-bold leading-tight">{title}</h2>
       {sub && <p className="mt-3 text-lg text-muted">{sub}</p>}
     </div>
@@ -148,11 +148,11 @@ function HeroVisual() {
 
 function Hero() {
   return (
-    <section className="py-14 sm:py-20">
+    <section className="py-12 sm:py-16">
       <div className="mx-auto max-w-6xl px-4 sm:px-8 grid gap-12 lg:grid-cols-2 items-center">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-accent">{m.hero.eyebrow}</p>
-          <h1 className="mt-3 text-4xl sm:text-5xl font-bold leading-[1.1]">{m.hero.headline}</h1>
+          <h1 className="mt-3 text-4xl sm:text-5xl font-bold leading-[1.1] tracking-tight">{m.hero.headline}</h1>
           <p className="mt-5 text-lg text-muted max-w-xl">{m.hero.sub}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Anchor id="audit-form" className={btnPrimary}>
@@ -166,10 +166,10 @@ function Hero() {
         <HeroVisual />
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 sm:px-8 mt-14 grid gap-4 md:grid-cols-3">
+      <div className="mx-auto max-w-6xl px-4 sm:px-8 mt-12 grid gap-4 md:grid-cols-3">
         {m.benefits.map((b, i) => (
           <div key={b.title} className="rounded-xl border border-line bg-surface p-5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-bg text-sm font-bold">{i + 1}</div>
+            <div className="h-1 w-8 rounded-full bg-accent" />
             <h3 className="mt-3 text-lg font-bold">{b.title}</h3>
             <p className="mt-1 text-muted">{b.text}</p>
             {i === 2 && (
@@ -218,8 +218,8 @@ function HowItWorks() {
       <ol className="grid gap-6 md:grid-cols-3">
         {m.how.steps.map((s, i) => (
           <li key={s.title} className="relative rounded-xl border border-line bg-surface p-6">
-            <div className="text-5xl font-bold text-accent/40 leading-none">{i + 1}</div>
-            <h3 className="mt-3 text-xl font-bold">{s.title}</h3>
+            <div className="text-4xl font-bold text-accent/40 leading-none">{i + 1}</div>
+            <h3 className="mt-2 text-xl font-bold">{s.title}</h3>
             <p className="mt-2 text-muted">{s.text}</p>
           </li>
         ))}
@@ -340,7 +340,7 @@ function Features() {
   return (
     <Section id="features" tone="alt">
       <SectionHead title={m.features.title} />
-      <div className="space-y-20">
+      <div className="space-y-14 sm:space-y-16">
         {m.features.items.map((f, i) => {
           const Visual = VISUALS[f.id];
           return (
@@ -374,7 +374,7 @@ function Features() {
 
 function Works() {
   return (
-    <Section>
+    <Section tight>
       <SectionHead title={m.works.title} sub={m.works.text} />
       <ul className="flex flex-wrap gap-3">
         {m.works.chips.map((c) => (

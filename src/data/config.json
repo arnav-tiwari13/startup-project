@@ -32,5 +32,6 @@
       "title": "Invoice capture",
       "blurb": "You snap a photo. A person checks every line."
     }
-  ]
+  ],
+  "corePrice": 500
 }

@@ -1,0 +1,126 @@
+{
+  "nav": [
+    { "id": "how", "label": "How it works" },
+    { "id": "features", "label": "Features" },
+    { "id": "pricing", "label": "Pricing" },
+    { "id": "faq", "label": "FAQ" }
+  ],
+  "hero": {
+    "eyebrow": "For independent restaurant owners",
+    "headline": "Know where your food money is going. We do the data entry.",
+    "sub": "Send us your invoices. Every week you get a short report that tells you where you are losing money on food and what to change.",
+    "primaryCta": "Get your free one-week audit",
+    "secondaryCta": "See the live demo"
+  },
+  "benefits": [
+    { "title": "No data entry for you", "text": "Snap a photo or forward the email. A person checks every line so the numbers are right." },
+    { "title": "Know what to change", "text": "Three plain actions each week, like raising a plate price or putting the scale back." },
+    { "title": "Pays for itself", "text": "The leaks we find are usually worth many times the monthly fee." }
+  ],
+  "results": {
+    "title": "What a free audit finds",
+    "sub": "Sample results for a fictional one-location barbecue restaurant."
+  },
+  "how": {
+    "title": "How it works",
+    "steps": [
+      { "title": "Free one-week audit", "text": "Send one week of invoices and your sales report. We compare what you spent to what your recipes say you should spend." },
+      { "title": "We handle the data entry", "text": "Photos and forwarded emails are read by AI, then a person checks every line. Short deliveries and price jumps get flagged." },
+      { "title": "A short report every week", "text": "A text with three things to do. The full numbers are one click away when you want them." }
+    ]
+  },
+  "features": {
+    "title": "What you get every week",
+    "items": [
+      {
+        "id": "report",
+        "route": "report",
+        "eyebrow": "Weekly report",
+        "title": "A text message, not another dashboard",
+        "text": "Short enough to read between lunch and dinner. It says what changed, what it costs you, and what to do about it.",
+        "bullets": ["Food cost against your target", "Three actions, in plain language", "Reply to ask questions, a person answers"],
+        "cta": "See the weekly report"
+      },
+      {
+        "id": "margins",
+        "route": "margins",
+        "eyebrow": "Menu margins",
+        "title": "Which dishes make money and which lose it",
+        "text": "Every dish costed from its recipe and current vendor prices, sorted worst first, so you know where a price change or a portion fix pays off.",
+        "bullets": ["Cost per plate from real ingredient prices", "Problem, watch and good flags", "Recipe breakdown for every dish"],
+        "cta": "See menu margins"
+      },
+      {
+        "id": "alerts",
+        "route": "alerts",
+        "eyebrow": "Price alerts",
+        "title": "Hear about vendor price jumps the week they happen",
+        "text": "Most owners find out months later, if at all. We flag anything that rose more than 5% and tell you which dishes it hits.",
+        "bullets": ["Week-over-week price changes", "The dishes each item affects", "One suggested action per alert"],
+        "cta": "See price alerts"
+      },
+      {
+        "id": "invoice",
+        "route": "invoice",
+        "eyebrow": "Invoice capture",
+        "title": "Take a photo. A person checks the rest.",
+        "text": "We catch the things that slip through: the case that did not arrive, the price that crept up, the credit nobody asked for.",
+        "bullets": ["Photo or forwarded email", "AI reads it, a person verifies every line", "Short deliveries and credits flagged"],
+        "cta": "See invoice capture"
+      }
+    ]
+  },
+  "works": {
+    "title": "Works with what you already use",
+    "text": "No integration project and no new software to learn. We work from the documents you already have.",
+    "chips": ["Toast sales reports", "Sysco invoices", "US Foods invoices", "Local vendor invoices", "Photos and email forwards"]
+  },
+  "pricing": {
+    "title": "Simple pricing",
+    "sub": "One plan to start. Cancel anytime.",
+    "core": {
+      "name": "Core",
+      "tagline": "Everything in the demo, done for you.",
+      "features": [
+        "Free one-week audit to start",
+        "Invoice data entry, checked by a person",
+        "Weekly report as a short text",
+        "Menu costing and margins",
+        "Vendor price alerts",
+        "Same-day answers to your questions"
+      ],
+      "cta": "Start with the free audit"
+    },
+    "later": {
+      "name": "Coming later",
+      "tagline": "On the roadmap, not in the demo.",
+      "features": ["Labor cost tracking", "Card processing fees", "Delivery app margins"]
+    }
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "items": [
+      { "q": "What does this actually do for my restaurant?", "a": "We turn your invoices and sales into a weekly report on food cost: where you are losing money and what to change. You do not log into software or type anything in." },
+      { "q": "Do I have to enter any data?", "a": "No. You send a photo or forward an email. We read it, a person checks every line, and we handle the rest." },
+      { "q": "How does the free audit work?", "a": "You send one week of invoices and a sales report. We show you the gap between what you spent and what your recipes say you should have spent, and the top five reasons for it." },
+      { "q": "What does it cost?", "a": "Core is $500 a month and you can cancel anytime. The audit is free." },
+      { "q": "Is a real person involved?", "a": "Yes. AI does the first read of your invoices, but a person verifies every line and answers your texts the same day." },
+      { "q": "Is the restaurant on this site real?", "a": "No. This is a demo with sample data for a fictional restaurant, so you can see what the weekly report and screens look like." }
+    ]
+  },
+  "cta": {
+    "title": "Find out what your food costs are hiding",
+    "text": "Start with a free one-week audit. No contract, no software to set up.",
+    "button": "Request my free audit",
+    "demoNote": "This form is a demo. Nothing is sent or stored."
+  },
+  "footer": {
+    "blurb": "Done-for-you food cost control for independent restaurants.",
+    "links": [
+      { "id": "how", "label": "How it works" },
+      { "id": "features", "label": "Features" },
+      { "id": "pricing", "label": "Pricing" },
+      { "id": "faq", "label": "FAQ" }
+    ]
+  }
+}

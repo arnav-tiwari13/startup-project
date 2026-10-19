@@ -4,7 +4,7 @@ import restaurant from "../data/restaurant.json";
 import { href, type Route } from "../router";
 
 const NAV: { route: Route; title: string }[] = [
-  { route: "home", title: "Overview" },
+  { route: "overview", title: "Overview" },
   ...(config.screens as { route: Route; title: string }[]),
 ];
 
@@ -23,7 +23,10 @@ export default function Layout({ route, title, children }: { route: Route; title
           <a href={href("home")} className="px-3 text-xl font-bold leading-tight">
             {config.productName}
           </a>
-          <div className="px-3 mt-1 mb-6 text-sm text-muted">{restaurant.name}</div>
+          <a href={href("home")} className="px-3 mt-1 text-xs text-accent font-medium">
+            ← Back to website
+          </a>
+          <div className="px-3 mt-3 mb-6 text-sm text-muted">{restaurant.name}</div>
           <nav className="space-y-1">
             {NAV.map((n) => (
               <a key={n.route} href={href(n.route)} className={linkClass(n.route === route)}>

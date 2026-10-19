@@ -3,6 +3,7 @@ import { href, useRoute, type Route } from "./router";
 import WeeklyReport from "./screens/WeeklyReport";
 import MenuMargins from "./screens/MenuMargins";
 import AuditResult from "./screens/AuditResult";
+import PriceAlerts from "./screens/PriceAlerts";
 import Placeholder from "./screens/Placeholder";
 import restaurant from "./data/restaurant.json";
 
@@ -10,7 +11,7 @@ const SCREENS: Record<Exclude<Route, "home">, { title: string; element: () => Re
   report: { title: "Weekly report", element: WeeklyReport },
   margins: { title: "Menu margins", element: MenuMargins },
   audit: { title: "Free audit result", element: AuditResult },
-  alerts: { title: "Price alerts", element: Placeholder },
+  alerts: { title: "Price alerts", element: PriceAlerts },
   invoice: { title: "Invoice capture", element: Placeholder },
 };
 

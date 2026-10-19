@@ -11,6 +11,8 @@ import PhoneFrame from "../components/PhoneFrame";
 import { coreOffer, pct, priceLabel, usd, usdCents } from "../format";
 import { href, type Route } from "../router";
 import { scrollToId } from "../scroll";
+import { signInWithGoogle, signOut, useSession } from "../auth";
+import { authConfigured } from "../supabase";
 
 const btnPrimary = "inline-flex items-center justify-center rounded-lg bg-accent px-5 py-3 font-semibold text-bg hover:opacity-90";
 const btnSecondary = "inline-flex items-center justify-center rounded-lg border border-line bg-surface px-5 py-3 font-semibold hover:border-accent";
@@ -53,6 +55,7 @@ function SectionHead({ title, sub }: { title: string; sub?: string }) {
 
 function TopNav() {
   const [open, setOpen] = useState(false);
+  const { session } = useSession();
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-surface/95 backdrop-blur">
       <div className="mx-auto max-w-6xl px-4 sm:px-8 h-16 flex items-center gap-6">
@@ -70,6 +73,16 @@ function TopNav() {
           <a href={href("overview")} className="hidden sm:inline text-sm font-semibold px-3 py-2 hover:text-accent">
             Live demo
           </a>
+          {authConfigured &&
+            (session ? (
+              <button type="button" onClick={() => signOut()} className="hidden sm:inline text-sm font-semibold px-3 py-2 hover:text-accent">
+                Sign out{session.user.email ? ` (${session.user.email})` : ""}
+              </button>
+            ) : (
+              <button type="button" onClick={() => signInWithGoogle()} className="text-sm font-semibold px-3 py-2 hover:text-accent">
+                Sign in with Google
+              </button>
+            ))}
           <Anchor id="signup" className={`${btnPrimary} !py-2 text-sm`}>
             Get started
           </Anchor>

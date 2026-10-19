@@ -1,20 +1,23 @@
 import Layout from "./components/Layout";
-import { href, useRoute, type Route } from "./router";
-import WeeklyReport from "./screens/WeeklyReport";
-import MenuMargins from "./screens/MenuMargins";
-import AuditResult from "./screens/AuditResult";
-import PriceAlerts from "./screens/PriceAlerts";
-import InvoiceCapture from "./screens/InvoiceCapture";
-import Placeholder from "./screens/Placeholder";
+import config from "./data/config.json";
 import restaurant from "./data/restaurant.json";
+import { useRoute, type Route } from "./router";
+import AuditResult from "./screens/AuditResult";
+import Home from "./screens/Home";
+import InvoiceCapture from "./screens/InvoiceCapture";
+import MenuMargins from "./screens/MenuMargins";
+import PriceAlerts from "./screens/PriceAlerts";
+import WeeklyReport from "./screens/WeeklyReport";
 
-const SCREENS: Record<Exclude<Route, "home">, { title: string; element: () => React.ReactElement }> = {
-  report: { title: "Weekly report", element: WeeklyReport },
-  margins: { title: "Menu margins", element: MenuMargins },
-  audit: { title: "Free audit result", element: AuditResult },
-  alerts: { title: "Price alerts", element: PriceAlerts },
-  invoice: { title: "Invoice capture", element: InvoiceCapture },
+const SCREENS: Record<Exclude<Route, "home">, () => React.ReactElement> = {
+  report: WeeklyReport,
+  margins: MenuMargins,
+  audit: AuditResult,
+  alerts: PriceAlerts,
+  invoice: InvoiceCapture,
 };
+
+const titleFor = (route: Exclude<Route, "home">) => config.screens.find((s) => s.route === route)?.title ?? "";
 
 export default function App() {
   const route = useRoute();
@@ -22,23 +25,14 @@ export default function App() {
   if (route === "home") {
     return (
       <Layout route={route} title={restaurant.name}>
-        <p className="text-muted mb-4">{restaurant.weekLabel}</p>
-        <ul className="space-y-2">
-          {(Object.keys(SCREENS) as (keyof typeof SCREENS)[]).map((key) => (
-            <li key={key}>
-              <a href={href(key)} className="block rounded-lg border border-line bg-surface px-4 py-3 font-medium">
-                {SCREENS[key].title}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <Home />
       </Layout>
     );
   }
 
-  const { title, element: Screen } = SCREENS[route];
+  const Screen = SCREENS[route];
   return (
-    <Layout route={route} title={title}>
+    <Layout route={route} title={titleFor(route)}>
       <Screen />
     </Layout>
   );

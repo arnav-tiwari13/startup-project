@@ -1,12 +1,13 @@
 import Layout from "./components/Layout";
 import { href, useRoute, type Route } from "./router";
 import WeeklyReport from "./screens/WeeklyReport";
+import MenuMargins from "./screens/MenuMargins";
 import Placeholder from "./screens/Placeholder";
 import restaurant from "./data/restaurant.json";
 
 const SCREENS: Record<Exclude<Route, "home">, { title: string; element: () => React.ReactElement }> = {
   report: { title: "Weekly report", element: WeeklyReport },
-  margins: { title: "Menu margins", element: Placeholder },
+  margins: { title: "Menu margins", element: MenuMargins },
   audit: { title: "Free audit result", element: Placeholder },
   alerts: { title: "Price alerts", element: Placeholder },
   invoice: { title: "Invoice capture", element: Placeholder },

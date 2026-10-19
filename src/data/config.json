@@ -5,7 +5,6 @@
     "name": "Arnav",
     "line": "Your contact: Arnav, texts answered same day."
   },
-  "coreOffer": "Start Core: $500/month, cancel anytime.",
   "screens": [
     {
       "route": "report",
@@ -19,8 +18,8 @@
     },
     {
       "route": "audit",
-      "title": "Free audit result",
-      "blurb": "What the free one-week audit finds."
+      "title": "Savings estimate",
+      "blurb": "What we find in your first weeks, and what it's worth."
     },
     {
       "route": "alerts",
@@ -33,5 +32,5 @@
       "blurb": "You snap a photo. A person checks every line."
     }
   ],
-  "corePrice": 500
+  "corePrice": 99
 }

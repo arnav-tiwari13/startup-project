@@ -21,7 +21,7 @@
     "eyebrow": "For independent restaurant owners",
     "headline": "Know where your food money is going. We do the data entry.",
     "sub": "Send us your invoices. Every week you get a short report on where you're losing money on food and what to change.",
-    "primaryCta": "Get your free one-week audit",
+    "primaryCta": "Get started for $99/month",
     "secondaryCta": "See the live demo"
   },
   "benefits": [
@@ -39,15 +39,15 @@
     }
   ],
   "results": {
-    "title": "What a free audit finds",
+    "title": "What the sample report finds",
     "sub": "Sample results for a fictional one-location barbecue restaurant."
   },
   "how": {
     "title": "How it works",
     "steps": [
       {
-        "title": "Free one-week audit",
-        "text": "Send a week of invoices and your sales report. We compare what you spent to what your recipes say you should spend."
+        "title": "Send us your invoices",
+        "text": "Send photos or forwarded emails of your invoices and your sales report. We set up your menu and recipe costs."
       },
       {
         "title": "We do the data entry",
@@ -129,19 +129,19 @@
   },
   "pricing": {
     "title": "Simple pricing",
-    "sub": "One plan to start. Cancel anytime.",
+    "sub": "One plan, at our early-development price. Cancel anytime.",
     "core": {
       "name": "Core",
       "tagline": "Everything in the demo, done for you.",
       "features": [
-        "Free one-week audit to start",
+        "Menu and recipe cost setup",
         "Invoice data entry, checked by a person",
         "Weekly report as a short text",
         "Menu costing and margins",
         "Vendor price alerts",
         "Same-day answers to your questions"
       ],
-      "cta": "Start with the free audit"
+      "cta": "Get started"
     },
     "later": {
       "name": "Coming later",
@@ -151,7 +151,8 @@
         "Card processing fees",
         "Delivery app margins"
       ]
-    }
+    },
+    "badge": "Early-development price"
   },
   "faq": {
     "title": "Frequently asked questions",
@@ -165,12 +166,12 @@
         "a": "No. You send a photo or forward an email. We read it, a person checks every line, and we handle the rest."
       },
       {
-        "q": "How does the free audit work?",
-        "a": "You send one week of invoices and a sales report. We show you the gap between what you spent and what your recipes say you should have spent, and the top five reasons for it."
+        "q": "How do I get started?",
+        "a": "Send photos or forwarded emails of your recent invoices and a sales report from your POS. We set up your menu and recipe costs, then your weekly reports start."
       },
       {
         "q": "What does it cost?",
-        "a": "Core is $500 a month and you can cancel anytime. The audit is free."
+        "a": "Core is {price}, our early-development price. You can cancel anytime."
       },
       {
         "q": "Is a real person involved?",
@@ -184,8 +185,8 @@
   },
   "cta": {
     "title": "Find out what your food costs are hiding",
-    "text": "Start with a free one-week audit. No contract, no software to set up.",
-    "button": "Request my free audit",
+    "text": "Get started with weekly food cost reports. No contract, no software to set up.",
+    "button": "Get started",
     "demoNote": "This form is a demo. Nothing is sent or stored."
   },
   "footer": {

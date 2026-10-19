@@ -1,8 +1,7 @@
 import audit from "../data/audit.json";
-import config from "../data/config.json";
 import restaurant from "../data/restaurant.json";
 import CostBar from "../components/CostBar";
-import { pct, usd } from "../format";
+import { coreOffer, pct, usd } from "../format";
 
 const { actualPct, theoreticalPct } = restaurant.foodCost;
 const gap = actualPct - theoreticalPct;
@@ -15,7 +14,7 @@ const barScale = Math.max(actualPct, theoreticalPct) * 1.1;
 export default function AuditResult() {
   return (
     <div className="space-y-6">
-      <p className="text-muted">What a prospect receives after the free one-week audit.</p>
+      <p className="text-muted">What we find in your first weeks, and what it is worth.</p>
 
       <div className="grid gap-6 lg:grid-cols-2 items-start">
       <div className="space-y-6">
@@ -66,7 +65,7 @@ export default function AuditResult() {
       </div>
 
       <div className="rounded-xl border-2 border-accent bg-surface p-5 text-center">
-        <p className="text-xl font-bold">{config.coreOffer}</p>
+        <p className="text-xl font-bold">{coreOffer}</p>
       </div>
     </div>
   );

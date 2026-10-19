@@ -8,7 +8,7 @@ import menu from "../data/menu.json";
 import report from "../data/weekly-report.json";
 import restaurant from "../data/restaurant.json";
 import PhoneFrame from "../components/PhoneFrame";
-import { pct, usd, usdCents } from "../format";
+import { coreOffer, pct, priceLabel, usd, usdCents } from "../format";
 import { href, type Route } from "../router";
 import { scrollToId } from "../scroll";
 
@@ -70,8 +70,8 @@ function TopNav() {
           <a href={href("overview")} className="hidden sm:inline text-sm font-semibold px-3 py-2 hover:text-accent">
             Live demo
           </a>
-          <Anchor id="audit-form" className={`${btnPrimary} !py-2 text-sm`}>
-            Free audit
+          <Anchor id="signup" className={`${btnPrimary} !py-2 text-sm`}>
+            Get started
           </Anchor>
           <button
             type="button"
@@ -155,7 +155,7 @@ function Hero() {
           <h1 className="mt-3 text-4xl sm:text-5xl font-bold leading-[1.1] tracking-tight">{m.hero.headline}</h1>
           <p className="mt-5 text-lg text-muted max-w-xl">{m.hero.sub}</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Anchor id="audit-form" className={btnPrimary}>
+            <Anchor id="signup" className={btnPrimary}>
               {m.hero.primaryCta}
             </Anchor>
             <a href={href("overview")} className={btnSecondary}>
@@ -174,7 +174,7 @@ function Hero() {
             <p className="mt-1 text-muted">{b.text}</p>
             {i === 2 && (
               <p className="mt-2 text-sm font-semibold text-good">
-                Core is {usd(config.corePrice)}/month. The sample audit finds about {usd(leakTotal)}/month.
+                Core is {usd(config.corePrice)}/month. The sample report finds about {usd(leakTotal)}/month.
               </p>
             )}
           </div>
@@ -188,7 +188,7 @@ function Results() {
   const stats = [
     { value: `${gap.toFixed(1)} pts`, label: "Gap between actual and recipe food cost" },
     { value: usd(leakTotal), label: "Estimated savings per month" },
-    { value: String(audit.leaks.length), label: "Leaks found in one week" },
+    { value: String(audit.leaks.length), label: "Leaks found in the sample week" },
     { value: String(priceAlerts.length), label: "Vendor price alerts this week" },
   ];
   return (
@@ -204,7 +204,7 @@ function Results() {
       </div>
       <p className="mt-6">
         <a href={href("audit")} className="font-semibold text-accent">
-          See the full audit result →
+          See the full savings estimate →
         </a>
       </p>
     </Section>
@@ -394,7 +394,10 @@ function Pricing() {
       <SectionHead title={m.pricing.title} sub={m.pricing.sub} />
       <div className="grid gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3 rounded-2xl border-2 border-accent bg-bg p-7">
-          <div className="text-sm font-semibold uppercase tracking-wide text-accent">{core.name}</div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-semibold uppercase tracking-wide text-accent">{core.name}</span>
+            <span className="rounded-full bg-watch-bg text-watch px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide">{m.pricing.badge}</span>
+          </div>
           <div className="mt-2 flex items-baseline gap-1">
             <span className="text-5xl font-bold tabular-nums">{usd(config.corePrice)}</span>
             <span className="text-muted">/month</span>
@@ -408,7 +411,7 @@ function Pricing() {
               </li>
             ))}
           </ul>
-          <Anchor id="audit-form" className={`${btnPrimary} mt-7`}>
+          <Anchor id="signup" className={`${btnPrimary} mt-7`}>
             {core.cta}
           </Anchor>
         </div>
@@ -441,7 +444,7 @@ function Faq() {
                 +
               </span>
             </summary>
-            <p className="mt-3 text-muted">{f.a}</p>
+            <p className="mt-3 text-muted">{f.a.replace("{price}", priceLabel)}</p>
           </details>
         ))}
       </div>
@@ -457,12 +460,12 @@ function FinalCta() {
   };
   const input = "w-full rounded-lg border border-line bg-bg px-3 py-2.5 outline-none focus:border-accent";
   return (
-    <Section id="audit-form" tone="alt">
+    <Section id="signup" tone="alt">
       <div className="grid gap-10 lg:grid-cols-2 items-center">
         <div>
           <h2 className="text-3xl sm:text-4xl font-bold leading-tight">{m.cta.title}</h2>
           <p className="mt-3 text-lg text-muted">{m.cta.text}</p>
-          <p className="mt-6 font-semibold">{config.coreOffer}</p>
+          <p className="mt-6 font-semibold">{coreOffer}</p>
         </div>
         <form onSubmit={submit} className="rounded-2xl border border-line bg-bg p-6 space-y-4">
           {sent ? (

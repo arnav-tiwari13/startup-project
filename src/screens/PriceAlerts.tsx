@@ -9,51 +9,50 @@ const alerts = data.alerts
 
 export default function PriceAlerts() {
   return (
-    <div>
-      <p className="text-muted mb-5">
+    <div className="space-y-5">
+      <p className="text-muted max-w-2xl">
         Items that cost more than {data.thresholdPct}% above last week. You find out the week it happens, not months
         later.
       </p>
 
-      <ul className="space-y-4">
-        {alerts.map((a) => (
-          <li key={a.item} className="rounded-xl border border-line bg-surface p-4">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="font-semibold leading-snug">{a.item}</div>
-                <div className="text-sm text-muted">{a.vendor}</div>
-              </div>
-              <span className="rounded-full bg-bad-bg text-bad px-2.5 py-0.5 text-sm font-bold tabular-nums whitespace-nowrap">
-                +{pct(a.change)}
-              </span>
-            </div>
-
-            <div className="mt-3 flex items-baseline gap-2 tabular-nums">
-              <span className="text-muted line-through">{usdCents(a.lastWeek)}</span>
-              <span aria-hidden className="text-muted">
-                →
-              </span>
-              <span className="text-2xl font-bold">{usdCents(a.thisWeek)}</span>
-            </div>
-
-            <div className="mt-3 text-sm">
-              <span className="text-muted">Affects: </span>
-              {a.affects.join(", ")}
-            </div>
-
-            <p className="mt-3 rounded-lg bg-watch-bg text-watch px-3 py-2 text-sm font-medium">
-              <span className="font-bold">What to do: </span>
-              {a.action}
-            </p>
-          </li>
-        ))}
-      </ul>
-
-      <div className="text-center mt-6">
-        <a href={href("margins")} className="text-accent font-semibold">
-          See how this hits your menu margins →
-        </a>
+      <div className="rounded-xl border border-line bg-surface overflow-x-auto">
+        <table className="w-full text-sm min-w-[56rem]">
+          <thead>
+            <tr className="bg-bg text-left text-xs uppercase tracking-wide text-muted">
+              <th className="px-4 py-3 font-medium">Item</th>
+              <th className="px-3 py-3 font-medium">Vendor</th>
+              <th className="px-3 py-3 font-medium text-right">Last week</th>
+              <th className="px-3 py-3 font-medium text-right">This week</th>
+              <th className="px-3 py-3 font-medium text-right">Change</th>
+              <th className="px-3 py-3 font-medium">Affects</th>
+              <th className="px-4 py-3 font-medium">What to do</th>
+            </tr>
+          </thead>
+          <tbody>
+            {alerts.map((a) => (
+              <tr key={a.item} className="border-t border-line align-top">
+                <td className="px-4 py-3 font-semibold">{a.item}</td>
+                <td className="px-3 py-3 text-muted">{a.vendor}</td>
+                <td className="px-3 py-3 text-right tabular-nums text-muted">{usdCents(a.lastWeek)}</td>
+                <td className="px-3 py-3 text-right tabular-nums font-bold">{usdCents(a.thisWeek)}</td>
+                <td className="px-3 py-3 text-right">
+                  <span className="rounded-full bg-bad-bg text-bad px-2.5 py-0.5 font-bold tabular-nums whitespace-nowrap">
+                    +{pct(a.change)}
+                  </span>
+                </td>
+                <td className="px-3 py-3">{a.affects.join(", ")}</td>
+                <td className="px-4 py-3">
+                  <span className="block rounded-lg bg-watch-bg text-watch px-2.5 py-1.5 font-medium">{a.action}</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
+
+      <a href={href("margins")} className="inline-block text-accent font-semibold">
+        See how this hits your menu margins →
+      </a>
     </div>
   );
 }

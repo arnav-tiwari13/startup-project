@@ -1,6 +1,7 @@
 import audit from "../data/audit.json";
 import config from "../data/config.json";
 import restaurant from "../data/restaurant.json";
+import CostBar from "../components/CostBar";
 import { pct, usd } from "../format";
 
 const { actualPct, theoreticalPct } = restaurant.foodCost;
@@ -11,30 +12,18 @@ const leakTotal = audit.leaks.reduce((sum, l) => sum + l.monthly, 0);
 const maxLeak = Math.max(...audit.leaks.map((l) => l.monthly));
 const barScale = Math.max(actualPct, theoreticalPct) * 1.1;
 
-function CostBar({ label, value, tone }: { label: string; value: number; tone: string }) {
-  return (
-    <div>
-      <div className="flex items-baseline justify-between mb-1">
-        <span className="text-sm text-muted">{label}</span>
-        <span className="text-2xl font-bold tabular-nums">{pct(value)}</span>
-      </div>
-      <div className="h-4 rounded-full bg-line overflow-hidden">
-        <div className={`h-full rounded-full ${tone}`} style={{ width: `${(value / barScale) * 100}%` }} />
-      </div>
-    </div>
-  );
-}
-
 export default function AuditResult() {
   return (
     <div className="space-y-6">
-      <p className="text-muted">What you get after the free one-week audit.</p>
+      <p className="text-muted">What a prospect receives after the free one-week audit.</p>
 
+      <div className="grid gap-6 lg:grid-cols-2 items-start">
+      <div className="space-y-6">
       <section className="rounded-xl border border-line bg-surface p-5">
         <h2 className="text-xl font-bold leading-snug mb-5">{audit.headline}</h2>
         <div className="space-y-4">
-          <CostBar label="What you actually spent" value={actualPct} tone="bg-bad" />
-          <CostBar label="What your recipes say you should spend" value={theoreticalPct} tone="bg-good" />
+          <CostBar label="What you actually spent" value={actualPct} scale={barScale} tone="bg-bad" />
+          <CostBar label="What your recipes say you should spend" value={theoreticalPct} scale={barScale} tone="bg-good" />
         </div>
         <p className="mt-4 text-sm text-muted">
           Gap: <strong className="text-ink">{gap.toFixed(1)} points</strong> on about {usd(restaurant.monthlySales)} in
@@ -51,6 +40,7 @@ export default function AuditResult() {
           {audit.savingsRange.lowPct}-{audit.savingsRange.highPct} points on {usd(restaurant.monthlySales)} a month.
         </div>
       </section>
+      </div>
 
       <section>
         <h2 className="text-lg font-bold mb-3">Your top 5 leaks</h2>
@@ -73,6 +63,7 @@ export default function AuditResult() {
           <span className="tabular-nums">{usd(leakTotal)}</span>
         </div>
       </section>
+      </div>
 
       <div className="rounded-xl border-2 border-accent bg-surface p-5 text-center">
         <p className="text-xl font-bold">{config.coreOffer}</p>

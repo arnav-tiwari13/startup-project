@@ -36,7 +36,7 @@ function flagMessage(l: Line): string | null {
 function MockInvoice() {
   return (
     <div
-      className="mx-auto w-full max-w-md rounded-sm bg-white text-neutral-800 shadow-lg ring-1 ring-black/10 p-4 font-mono text-[11px] leading-tight -rotate-1"
+      className="w-full max-w-lg rounded-sm bg-white text-neutral-800 shadow-lg ring-1 ring-black/10 p-4 font-mono text-xs leading-tight -rotate-1"
       aria-label="Photo of a sample invoice"
     >
       <div className="flex justify-between border-b border-neutral-400 pb-2 mb-2">
@@ -95,13 +95,14 @@ export default function InvoiceCapture() {
         ))}
       </ol>
 
+      <div className="grid gap-8 lg:grid-cols-2 items-start">
       <section>
         <h2 className="text-sm font-semibold uppercase tracking-wide text-muted mb-3">What you send</h2>
         <MockInvoice />
       </section>
 
-      <section>
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted mb-3">
+      <section className="space-y-4">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
           What we pull out of it ({restaurant.name})
         </h2>
         <div className="rounded-xl border border-line bg-surface overflow-hidden">
@@ -156,9 +157,9 @@ export default function InvoiceCapture() {
             </tbody>
           </table>
         </div>
+        <div className="rounded-xl bg-good-bg text-good px-4 py-3 text-center font-bold">✓ {invoice.verifiedBadge}</div>
       </section>
-
-      <div className="rounded-xl bg-good-bg text-good px-4 py-3 text-center font-bold">✓ {invoice.verifiedBadge}</div>
+      </div>
     </div>
   );
 }

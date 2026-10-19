@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import menu from "../data/menu.json";
-import { pct, usd } from "../format";
+import { pct, usd, usdCents } from "../format";
 
 type Status = "Problem" | "Watch" | "Good";
 type RecipeLine = { item: string; amount: string; cost: number };
@@ -43,7 +43,7 @@ function Breakdown({ dish }: { dish: Dish }) {
 
   return (
     <div className="border-t border-line px-4 py-3 bg-bg/60">
-      <table className="w-full text-sm">
+      <table className="w-full max-w-xl text-sm">
         <thead>
           <tr className="text-left text-xs uppercase tracking-wide text-muted">
             <th className="py-1 font-medium">Ingredient</th>
@@ -68,7 +68,7 @@ function Breakdown({ dish }: { dish: Dish }) {
         </tbody>
       </table>
       {note && line && (
-        <p className="mt-3 rounded-lg bg-bad-bg text-bad px-3 py-2 text-sm font-medium">
+        <p className="mt-3 max-w-xl rounded-lg bg-bad-bg text-bad px-3 py-2 text-sm font-medium">
           The recipe says {note.specOz} oz of brisket. At the {note.actualOz} oz plates are averaging, the brisket costs{" "}
           {usd(actualCost)} instead of {usd(line.cost)}.
         </p>
@@ -80,49 +80,84 @@ function Breakdown({ dish }: { dish: Dish }) {
 export default function MenuMargins() {
   const [open, setOpen] = useState<string | null>(null);
   const sorted = [...dishes].sort((a, b) => foodCostPct(b) - foodCostPct(a));
+  const counts = (["Problem", "Watch", "Good"] as Status[]).map((st) => ({
+    st,
+    n: sorted.filter((d) => statusFor(foodCostPct(d)) === st).length,
+  }));
 
   return (
-    <div>
-      <p className="text-muted mb-2">
-        Which dishes make money and which lose it, worst first. Based on net sales. Tap a dish to see what goes
-        into it.
-      </p>
-      <p className="text-xs text-muted mb-5">
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-muted max-w-xl">
+          Which dishes make money and which lose it, worst first, based on net sales. Click a dish to see what goes
+          into it.
+        </p>
+        <div className="flex gap-2 text-sm">
+          {counts.map(({ st, n }) => (
+            <span key={st} className={`rounded-full px-3 py-1 font-semibold ${STATUS_STYLE[st]}`}>
+              {n} {st}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-line bg-surface overflow-x-auto">
+        <table className="w-full text-sm min-w-[40rem]">
+          <thead>
+            <tr className="bg-bg text-left text-xs uppercase tracking-wide text-muted">
+              <th className="px-4 py-3 font-medium">Dish</th>
+              <th className="px-3 py-3 font-medium text-right">Price</th>
+              <th className="px-3 py-3 font-medium text-right">Cost per plate</th>
+              <th className="px-3 py-3 font-medium text-right">Food cost %</th>
+              <th className="px-3 py-3 font-medium text-right">Sold/week</th>
+              <th className="px-4 py-3 font-medium">Status</th>
+              <th className="w-8" />
+            </tr>
+          </thead>
+          <tbody>
+            {sorted.map((d) => {
+              const p = foodCostPct(d);
+              const isOpen = open === d.id;
+              return (
+                <Fragment key={d.id}>
+                  <tr
+                    onClick={() => setOpen(isOpen ? null : d.id)}
+                    className="border-t border-line cursor-pointer hover:bg-bg/60"
+                  >
+                    <td className="px-4 py-3 font-semibold">
+                      <button type="button" aria-expanded={isOpen} className="text-left">
+                        {d.name}
+                      </button>
+                    </td>
+                    <td className="px-3 py-3 text-right tabular-nums">{usdCents(d.price)}</td>
+                    <td className="px-3 py-3 text-right tabular-nums">{usdCents(d.costPerPlate)}</td>
+                    <td className="px-3 py-3 text-right tabular-nums font-bold text-base">{pct(p)}</td>
+                    <td className="px-3 py-3 text-right tabular-nums">{d.soldPerWeek}</td>
+                    <td className="px-4 py-3">
+                      <Badge status={statusFor(p)} />
+                    </td>
+                    <td aria-hidden className="pr-3 text-muted text-lg">
+                      {isOpen ? "−" : "+"}
+                    </td>
+                  </tr>
+                  {isOpen && (
+                    <tr>
+                      <td colSpan={7} className="p-0">
+                        <Breakdown dish={d} />
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <p className="text-xs text-muted">
         Problem: above {menu.thresholds.problemAbovePct}% · Watch: {menu.thresholds.watchAbovePct}-
         {menu.thresholds.problemAbovePct}% · Good: below {menu.thresholds.watchAbovePct}%
       </p>
-
-      <ul className="space-y-3">
-        {sorted.map((d) => {
-          const p = foodCostPct(d);
-          const isOpen = open === d.id;
-          return (
-            <li key={d.id} className="rounded-xl border border-line bg-surface overflow-hidden">
-              <button
-                type="button"
-                aria-expanded={isOpen}
-                onClick={() => setOpen(isOpen ? null : d.id)}
-                className="w-full text-left px-4 py-3 flex items-center gap-3"
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold leading-snug">{d.name}</div>
-                  <div className="text-sm text-muted mt-0.5">
-                    {usd(d.price)} price · {usd(d.costPerPlate)} cost · {d.soldPerWeek} sold/week
-                  </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <div className="text-2xl font-bold tabular-nums leading-none mb-1.5">{pct(p)}</div>
-                  <Badge status={statusFor(p)} />
-                </div>
-                <span aria-hidden className="text-muted text-lg">
-                  {isOpen ? "−" : "+"}
-                </span>
-              </button>
-              {isOpen && <Breakdown dish={d} />}
-            </li>
-          );
-        })}
-      </ul>
     </div>
   );
 }

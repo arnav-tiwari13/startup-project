@@ -5,7 +5,7 @@ import { supabase } from "./supabase";
 export const signInWithGoogle = () =>
   supabase?.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: `${window.location.origin}/#/overview` },
+    options: { redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}#/overview` },
   });
 
 export const signOut = () => supabase?.auth.signOut();

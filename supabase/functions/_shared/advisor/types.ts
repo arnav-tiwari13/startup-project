@@ -1,0 +1,91 @@
+export const PERIODS = ["last_7_days", "last_14_days", "last_28_days"] as const;
+export type Period = (typeof PERIODS)[number];
+export const PERIOD_DAYS: Record<Period, number> = { last_7_days: 7, last_14_days: 14, last_28_days: 28 };
+
+export interface Ingredient { id: string; name: string; unit: string; vendor: string }
+/** A vendor price that takes effect on `date` and stays until the next point. */
+export interface PricePoint { ingredientId: string; date: string; unitCost: number }
+export interface RecipeLine { ingredientId: string; qty: number }
+export interface MenuItem { id: string; name: string; price: number; recipe: RecipeLine[] }
+export interface DailySale { date: string; itemId: string; units: number }
+/** Counted usage of an ingredient between two dates (inclusive), from inventory counts. */
+export interface UsageCount { ingredientId: string; start: string; end: string; actualUsed: number }
+
+export interface RestaurantDataset {
+  restaurantId: string;
+  name: string;
+  /** "Today" for the dataset, YYYY-MM-DD. Periods end on this date. */
+  asOf: string;
+  ingredients: Ingredient[];
+  prices: PricePoint[];
+  menu: MenuItem[];
+  sales: DailySale[];
+  usage: UsageCount[];
+}
+
+/** Returned when the data needed to answer does not exist. The model is told to say so. */
+export interface NoData {
+  error: "no_data";
+  message: string;
+  needs: string;
+}
+
+export type Result<T> = T | NoData;
+export const isNoData = (r: unknown): r is NoData => typeof r === "object" && r !== null && (r as NoData).error === "no_data";
+
+export interface FoodCostResult {
+  period: Period;
+  start: string;
+  end: string;
+  sales: number;
+  food_cost_dollars: number;
+  food_cost_pct: number;
+  basis: "actual_inventory_usage" | "theoretical_from_recipes";
+  theoretical_cost_dollars: number;
+  theoretical_pct: number;
+}
+
+export interface PriceChange {
+  ingredient: string;
+  vendor: string;
+  unit: string;
+  old_price: number;
+  new_price: number;
+  change_pct: number;
+  extra_cost_in_period: number;
+}
+export interface PriceChangesResult { period: Period; start: string; end: string; changes: PriceChange[]; note?: string }
+
+export interface MarginRow { item: string; price: number; cost_per_plate: number; margin_dollars: number; margin_pct: number; food_cost_pct: number }
+export interface MenuMarginsResult { as_of: string; items: MarginRow[] }
+
+export interface VarianceRow {
+  ingredient: string; unit: string; theoretical_qty: number; actual_qty: number;
+  variance_qty: number; variance_pct: number; variance_dollars: number;
+}
+export interface ActualVsTheoreticalResult {
+  period: Period; start: string; end: string;
+  theoretical_cost_dollars: number; actual_cost_dollars: number; gap_dollars: number;
+  theoretical_pct: number; actual_pct: number; gap_pct_points: number;
+  ingredients: VarianceRow[];
+}
+
+export interface SalesSummaryResult {
+  period: Period; start: string; end: string;
+  total_sales: number; total_units: number; avg_daily_sales: number;
+  top_sellers: { item: string; units: number; revenue: number }[];
+  slow_sellers: { item: string; units: number; revenue: number }[];
+  best_day: { date: string; sales: number };
+  worst_day: { date: string; sales: number };
+  daily_totals: { date: string; sales: number }[];
+}
+
+/** The interface the AI tools call. Swap the implementation to move from mock to real data. */
+export interface RestaurantData {
+  readonly restaurantId: string;
+  getFoodCost(period: Period): Result<FoodCostResult>;
+  getPriceChanges(period: Period): Result<PriceChangesResult>;
+  getMenuMargins(): Result<MenuMarginsResult>;
+  getActualVsTheoretical(period: Period): Result<ActualVsTheoreticalResult>;
+  getSalesSummary(period: Period): Result<SalesSummaryResult>;
+}

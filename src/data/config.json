@@ -2,8 +2,7 @@
   "productName": "platecfo",
   "demoLabel": "Demo: sample data",
   "contact": {
-    "name": "Arnav",
-    "line": "Your contact: Arnav, texts answered same day."
+    "line": "Questions? Ask the AI assistant any time."
   },
   "screens": [
     {
@@ -29,7 +28,7 @@
     {
       "route": "invoice",
       "title": "Invoice capture",
-      "blurb": "You snap a photo. A person checks every line."
+      "blurb": "Snap a photo. AI reads it and flags what looks off."
     }
   ],
   "corePrice": 99

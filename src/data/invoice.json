@@ -4,8 +4,8 @@
   "date": "Oct 14",
   "steps": [
     "Snap a photo or forward the email",
-    "AI reads it",
-    "A person checks every line"
+    "AI reads every line",
+    "Review what was flagged"
   ],
   "lines": [
     {
@@ -40,7 +40,7 @@
       "flag": null
     }
   ],
-  "verifiedBadge": "Verified by Arnav, Oct 14",
   "billTo": "Cedar Lane Smokehouse",
-  "billToLocation": "Austin, TX"
+  "billToLocation": "Austin, TX",
+  "readBadge": "Read by AI, Oct 14"
 }

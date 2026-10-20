@@ -1,213 +1,186 @@
 {
   "nav": [
-    {
-      "id": "how",
-      "label": "How it works"
-    },
-    {
-      "id": "features",
-      "label": "Features"
-    },
-    {
-      "id": "pricing",
-      "label": "Pricing"
-    },
-    {
-      "id": "faq",
-      "label": "FAQ"
-    }
+    { "id": "how", "label": "How it works" },
+    { "id": "features", "label": "Features" },
+    { "id": "security", "label": "Security" },
+    { "id": "pricing", "label": "Pricing" },
+    { "id": "faq", "label": "FAQ" }
   ],
   "hero": {
-    "eyebrow": "For independent restaurant owners",
-    "headline": "Know where your food money is going. We do the data entry.",
-    "sub": "Send us your invoices. Every week you get a short report on where you're losing money on food and what to change.",
+    "eyebrow": "For restaurants, food trucks, quick-service and food retail",
+    "headline": "The AI advisor that runs the numbers on your food business.",
+    "sub": "Ask what to change, see how your business is really doing, and manage inventory, suppliers and marketing from one place.",
     "primaryCta": "Get started for $99/month",
-    "secondaryCta": "See the live demo"
+    "secondaryCta": "See the live demo",
+    "chatQuestion": "Why is my food cost still above target?"
   },
   "benefits": [
-    {
-      "title": "No data entry for you",
-      "text": "Snap a photo or forward the email. A person checks every line."
-    },
-    {
-      "title": "Know what to change",
-      "text": "Three plain actions each week, like raising a plate price."
-    },
-    {
-      "title": "Pays for itself",
-      "text": "The leaks we find are worth many times the monthly fee."
-    }
+    { "title": "Ask anything", "text": "An AI advisor that knows your sales, costs and menu, and tells you what to do next." },
+    { "title": "See it as it happens", "text": "A live dashboard. Click any number and ask why it moved." },
+    { "title": "Run it from your phone", "text": "Get text snapshots and check in remotely, wherever you are." }
   ],
+  "audience": {
+    "title": "Built for food businesses of every size",
+    "items": [
+      { "name": "Restaurants", "text": "Menu costing, supplier prices and weekly food cost in one view." },
+      { "name": "Food trucks", "text": "Track stock on the move and know what to prep before the next shift." },
+      { "name": "To-go and fast food", "text": "Fast-moving sales, tight margins and inventory that updates itself." },
+      { "name": "Retail food shops", "text": "Know which products sell, which sit, and when to reorder." }
+    ]
+  },
   "results": {
-    "title": "What the sample report finds",
+    "title": "What platecfo finds in the sample data",
     "sub": "Sample results for a fictional one-location barbecue restaurant."
   },
   "how": {
     "title": "How it works",
     "steps": [
-      {
-        "title": "Send us your invoices",
-        "text": "Send photos or forwarded emails of your invoices and your sales report. We set up your menu and recipe costs."
-      },
-      {
-        "title": "We do the data entry",
-        "text": "AI reads your photos and emails, then a person checks every line and flags short deliveries and price jumps."
-      },
-      {
-        "title": "A short report every week",
-        "text": "A text with three things to do. The full numbers are one click away."
-      }
+      { "title": "Set up once", "text": "Connect your sales and add your recipes and suppliers. platecfo learns what goes into every product." },
+      { "title": "Every sale updates your numbers", "text": "Each transaction subtracts the ingredients it used, so inventory, costs and margins stay current without manual counts." },
+      { "title": "Ask, act and stay in the loop", "text": "Ask the AI what to change, run your business from the dashboard, and get snapshots by text." }
     ]
   },
   "features": {
-    "title": "What you get every week",
+    "title": "Everything you need to run the business",
     "items": [
       {
-        "id": "report",
-        "route": "report",
-        "eyebrow": "Weekly report",
-        "title": "A text message, not another dashboard",
-        "text": "Short enough to read between lunch and dinner: what changed, what it costs you, and what to do.",
-        "bullets": [
-          "Food cost against your target",
-          "Three actions, in plain language",
-          "Reply to ask questions, a person answers"
-        ],
-        "cta": "See the weekly report"
+        "id": "advisor",
+        "eyebrow": "AI business advisor",
+        "title": "A chatbot that gives you real advice, not generic tips",
+        "text": "Ask what to implement, what is trending and how to adapt. It answers from your own numbers, with the financial analysis behind it.",
+        "bullets": ["Detailed, step-by-step recommendations", "Market trends and how to respond to them", "Financial metrics explained in plain language"]
       },
       {
-        "id": "margins",
+        "id": "dashboard",
+        "eyebrow": "Live dashboard",
+        "title": "Click any metric and ask why it moved",
+        "text": "See sales, top sellers, biggest expenses and what is driving revenue. Spot a dip or a jump, then ask the AI what caused it and how to follow it up.",
+        "bullets": ["Key sales and revenue drivers", "Items that sell out most, and highest expenses", "Ask why directly from any number"],
+        "route": "overview",
+        "cta": "Open the dashboard demo"
+      },
+      {
+        "id": "inventory",
+        "eyebrow": "Automatic inventory",
+        "title": "Every sale subtracts exactly what it used",
+        "text": "Enter what goes into each product once. After that, each transaction deducts the ingredients, so you stop counting stock by hand.",
+        "bullets": ["Recipe-based deductions on every sale", "Live stock and cost per plate", "Low-stock and waste flags"],
         "route": "margins",
-        "eyebrow": "Menu margins",
-        "title": "Which dishes make money and which lose it",
-        "text": "Every dish costed from its recipe and current vendor prices, worst first, so you know where a price or portion fix pays off.",
-        "bullets": [
-          "Cost per plate from real ingredient prices",
-          "Problem, watch and good flags",
-          "Recipe breakdown for every dish"
-        ],
         "cta": "See menu margins"
       },
       {
-        "id": "alerts",
+        "id": "suppliers",
+        "eyebrow": "Suppliers and procurement",
+        "title": "Order, track deliveries and find better suppliers",
+        "text": "Place orders with your suppliers and watch deliveries arrive on a map-style timeline. When a price jumps, the AI helps you find alternatives.",
+        "bullets": ["Orders and delivery tracking in one place", "Price-jump alerts with suggested actions", "Supplier suggestions when prices or events change"],
         "route": "alerts",
-        "eyebrow": "Price alerts",
-        "title": "Hear about vendor price jumps the week they happen",
-        "text": "Most owners hear about a price jump months later, if ever. We flag anything up more than 5% and the dishes it hits.",
-        "bullets": [
-          "Week-over-week price changes",
-          "The dishes each item affects",
-          "One suggested action per alert"
-        ],
-        "cta": "See price alerts"
+        "cta": "See price alerts",
+        "order": { "number": "PO-1042", "vendor": "Primary supplier", "status": "Out for delivery", "eta": "2:40 PM", "miles": 12, "progress": 70 },
+        "suggestion": "Brisket is up {brisketChange} this week. 3 other suppliers within 25 miles carry whole packer brisket. Compare quotes."
       },
       {
-        "id": "invoice",
-        "route": "invoice",
-        "eyebrow": "Invoice capture",
-        "title": "Take a photo. A person checks the rest.",
-        "text": "We catch what slips through: the case that never arrived, the price that crept up, the credit nobody claimed.",
-        "bullets": [
-          "Photo or forwarded email",
-          "AI reads it, a person verifies every line",
-          "Short deliveries and credits flagged"
-        ],
-        "cta": "See invoice capture"
+        "id": "marketing",
+        "eyebrow": "Marketing guidance",
+        "title": "Know who to target and exactly what to do",
+        "text": "The AI looks at what sells and what earns the best margin, then tells you who to reach and how, step by step.",
+        "bullets": ["A clear target audience", "Simple, ordered steps you can act on today", "Promotions built around your best-margin items"],
+        "audience": "Office lunch crowd within 2 miles",
+        "steps": [
+          "Feature the {topDish} as the weekday lunch special ({topDishPct} food cost).",
+          "Update your Google Business Profile with current hours, photos and the special.",
+          "Post a short video of the smoker every Friday to bring in weekend traffic."
+        ]
+      },
+      {
+        "id": "team",
+        "eyebrow": "Owner, manager and employee views",
+        "title": "Everyone sees what they need, nothing more",
+        "text": "Owners get the full picture. Managers get what to delegate and optimize. Employees see the owner's notes, their to-do list and how the day is going.",
+        "bullets": ["Role-based access built in", "Owner notes and to-do lists for the team", "Bottlenecks and inventory for managers"],
+        "roles": [
+          { "id": "owner", "label": "Owner", "heading": "Full business view", "items": ["Revenue, margins and trends", "AI advisor and financial analysis", "Leave notes and assign to-dos for the team"] },
+          { "id": "manager", "label": "Manager", "heading": "Run the floor", "items": ["Bottlenecks: slicing station is the slowest step at lunch", "What to delegate to the team today", "Inventory levels and what to reorder"] },
+          { "id": "employee", "label": "Employee", "heading": "Your day at a glance", "items": ["Owner note: keep portions to 8 oz", "To-do: smoke 50 racks of ribs Saturday", "How the business is doing right now"] }
+        ]
+      },
+      {
+        "id": "mobile",
+        "eyebrow": "Mobile snapshots",
+        "title": "Check on the business from your phone",
+        "text": "Get overview texts that show what is going on, and review what needs doing from anywhere, without opening a laptop.",
+        "bullets": ["Scheduled snapshot texts", "Remote monitoring from any device", "Reply to ask the AI a question"],
+        "route": "report",
+        "cta": "See the weekly text"
       }
+    ]
+  },
+  "security": {
+    "title": "Your data is secure, and it stays yours",
+    "sub": "Your sales, costs and supplier information are the heart of your business. We treat them that way.",
+    "items": [
+      { "title": "Encrypted everywhere", "text": "Data is encrypted in transit and at rest." },
+      { "title": "Role-based access", "text": "Owners, managers and employees only see what their role allows." },
+      { "title": "You own your data", "text": "Export it or delete it whenever you want." },
+      { "title": "Never sold or shared", "text": "Your data is never sold, and never used to benefit another business." },
+      { "title": "Every action logged", "text": "See who signed in and who changed what." }
     ]
   },
   "works": {
     "title": "Works with what you already use",
-    "text": "No integration project and no new software. We work from the documents you already have.",
-    "chips": [
-      "Toast sales reports",
-      "Sysco invoices",
-      "US Foods invoices",
-      "Local vendor invoices",
-      "Photos and email forwards"
-    ]
+    "text": "Connect the tools you run on today. No new hardware.",
+    "chips": ["POS sales (Toast and others)", "Supplier invoices and orders", "Recipes and menus", "Your phone, by text"]
   },
   "pricing": {
     "title": "Simple pricing",
     "sub": "One plan, at our early-development price. Cancel anytime.",
+    "badge": "Early-development price",
     "core": {
       "name": "Core",
-      "tagline": "Everything in the demo, done for you.",
+      "tagline": "The full platform for one location.",
       "features": [
-        "Menu and recipe cost setup",
-        "Invoice data entry, checked by a person",
-        "Weekly report as a short text",
-        "Menu costing and margins",
-        "Vendor price alerts",
-        "Same-day answers to your questions"
+        "AI business advisor chatbot",
+        "Live, interactive dashboard",
+        "Automatic inventory tracking from sales",
+        "Supplier ordering and delivery tracking",
+        "AI procurement and marketing guidance",
+        "Owner, manager and employee views",
+        "Mobile snapshots by text"
       ],
       "cta": "Get started"
     },
     "later": {
       "name": "Coming later",
       "tagline": "On the roadmap, not in the demo.",
-      "features": [
-        "Labor cost tracking",
-        "Card processing fees",
-        "Delivery app margins"
-      ]
-    },
-    "badge": "Early-development price"
+      "features": ["Labor cost tracking", "Card processing fees", "Delivery app margins"]
+    }
   },
   "faq": {
     "title": "Frequently asked questions",
     "items": [
-      {
-        "q": "What does this actually do for my restaurant?",
-        "a": "We turn your invoices and sales into a weekly report on food cost: where you are losing money and what to change. You do not log into software or type anything in."
-      },
-      {
-        "q": "Do I have to enter any data?",
-        "a": "No. You send a photo or forward an email. We read it, a person checks every line, and we handle the rest."
-      },
-      {
-        "q": "How do I get started?",
-        "a": "Send photos or forwarded emails of your recent invoices and a sales report from your POS. We set up your menu and recipe costs, then your weekly reports start."
-      },
-      {
-        "q": "What does it cost?",
-        "a": "Core is {price}, our early-development price. You can cancel anytime."
-      },
-      {
-        "q": "Is a real person involved?",
-        "a": "Yes. AI does the first read of your invoices, but a person verifies every line and answers your texts the same day."
-      },
-      {
-        "q": "Is the restaurant on this site real?",
-        "a": "No. This is a demo with sample data for a fictional restaurant, so you can see what the weekly report and screens look like."
-      }
+      { "q": "What does platecfo do?", "a": "It is an AI advisor and dashboard for food businesses. It reads your sales, recipes and supplier prices, tells you what to change, and handles inventory, ordering and marketing guidance in one place." },
+      { "q": "Who is it for?", "a": "Restaurants, food trucks, to-go and fast-food shops, and retail food stores." },
+      { "q": "How does inventory tracking work?", "a": "You enter what goes into each product once. After that, every sale subtracts the ingredients it used, so stock and costs update on their own." },
+      { "q": "How is my data protected?", "a": "Your data is encrypted in transit and at rest, access is limited by role, and every sign-in and change is logged. It is never sold or shared, and you can export or delete it anytime." },
+      { "q": "Can I trust the AI's advice?", "a": "Recommendations come from your own sales, recipes and supplier data, and they show the numbers behind them so you can check the reasoning. Treat them as decision support, not a guarantee." },
+      { "q": "What does it cost?", "a": "Core is {price}, our early-development price. You can cancel anytime." },
+      { "q": "Is the restaurant on this site real?", "a": "No. This is a demo with sample data for a fictional restaurant, so you can see what the screens look like." }
     ]
   },
   "cta": {
-    "title": "Find out what your food costs are hiding",
-    "text": "Get started with weekly food cost reports. No contract, no software to set up.",
+    "title": "Run your food business with an advisor that knows your numbers",
+    "text": "Get started with the full platform. No contract, no new hardware.",
     "button": "Get started",
     "demoNote": "This form is a demo. Nothing is sent or stored."
   },
   "footer": {
-    "blurb": "Done-for-you food cost control for independent restaurants.",
+    "blurb": "The AI advisor for restaurants, food trucks, quick-service and food retail.",
     "links": [
-      {
-        "id": "how",
-        "label": "How it works"
-      },
-      {
-        "id": "features",
-        "label": "Features"
-      },
-      {
-        "id": "pricing",
-        "label": "Pricing"
-      },
-      {
-        "id": "faq",
-        "label": "FAQ"
-      }
+      { "id": "how", "label": "How it works" },
+      { "id": "features", "label": "Features" },
+      { "id": "security", "label": "Security" },
+      { "id": "pricing", "label": "Pricing" },
+      { "id": "faq", "label": "FAQ" }
     ]
   }
 }

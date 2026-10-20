@@ -2,7 +2,6 @@ import { useId, useState, type FormEvent, type MouseEvent, type ReactNode } from
 import alertsData from "../data/price-alerts.json";
 import audit from "../data/audit.json";
 import config from "../data/config.json";
-import invoice from "../data/invoice.json";
 import m from "../data/marketing.json";
 import menu from "../data/menu.json";
 import report from "../data/weekly-report.json";
@@ -125,40 +124,64 @@ function TopNav() {
   );
 }
 
+const dishes = menu.dishes.map((d) => ({ ...d, p: (d.costPerPlate / d.price) * 100, revenue: d.price * d.soldPerWeek, weeklyCost: d.costPerPlate * d.soldPerWeek }));
+const brisketAlert = alertsData.alerts.find((a) => a.item.startsWith("Brisket"))!;
+const brisketChange = pct(((brisketAlert.thisWeek - brisketAlert.lastWeek) / brisketAlert.lastWeek) * 100);
+const portionLeak = audit.leaks.find((l) => l.leak.includes("oz"))!;
+const topDish = dishes
+  .filter((d) => d.p < menu.thresholds.watchAbovePct && d.price >= 10)
+  .sort((a, b) => b.revenue - a.revenue)[0];
+const topRevenue = [...dishes].sort((a, b) => b.revenue - a.revenue)[0];
+const topCost = [...dishes].sort((a, b) => b.weeklyCost - a.weeklyCost)[0];
+const brisketPlate = menu.dishes.find((d) => d.id === "brisket-plate")!;
+
+type Feature = Record<string, unknown>;
+const feature = <T,>(id: string) => m.features.items.find((i) => i.id === id) as unknown as T;
+
+function ChatCard({ children }: { children: ReactNode }) {
+  return (
+    <div className="rounded-2xl border border-line bg-surface shadow-xl overflow-hidden">
+      <div className="flex items-center gap-2 border-b border-line bg-bg px-4 py-2.5 text-sm font-semibold">
+        <span className="h-2 w-2 rounded-full bg-good" aria-hidden />
+        {config.productName} AI
+      </div>
+      <div className="space-y-3 p-4 text-sm leading-snug">{children}</div>
+      <div className="border-t border-line px-4 py-2.5 text-sm text-muted">Ask about your business…</div>
+    </div>
+  );
+}
+
+const Ask = ({ children }: { children: ReactNode }) => (
+  <div className="ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-accent px-3.5 py-2.5 font-medium text-bg">{children}</div>
+);
+const Answer = ({ children }: { children: ReactNode }) => (
+  <div className="max-w-[95%] rounded-2xl rounded-bl-sm border border-line bg-bg px-3.5 py-3 space-y-2">{children}</div>
+);
+
 function HeroVisual() {
   const top = audit.leaks.slice(0, 3);
-  const max = Math.max(...top.map((l) => l.monthly));
   return (
-    <div className="rounded-2xl border border-line bg-surface p-5 shadow-xl">
-      <div className="flex items-center justify-between text-xs text-muted">
-        <span className="font-semibold uppercase tracking-wide">{restaurant.name}</span>
-        <span>{restaurant.weekLabel}</span>
-      </div>
-      <div className="mt-4 flex items-end gap-6">
-        <div>
-          <div className="text-5xl font-bold tabular-nums leading-none">{pct(report.foodCostPct)}</div>
-          <div className="mt-1 text-sm text-muted">food cost this week</div>
-        </div>
-        <div>
-          <div className="text-2xl font-bold tabular-nums leading-none text-muted">{pct(report.targetPct)}</div>
-          <div className="mt-1 text-sm text-muted">target</div>
-        </div>
-      </div>
-      <div className="mt-5 text-xs font-semibold uppercase tracking-wide text-muted">Biggest leaks, per month</div>
-      <ul className="mt-2 space-y-3">
-        {top.map((l) => (
-          <li key={l.rank}>
-            <div className="flex justify-between gap-3 text-sm">
-              <span className="leading-snug">{l.leak}</span>
-              <span className="font-bold tabular-nums">{usd(l.monthly)}</span>
-            </div>
-            <div className="mt-1 h-1.5 rounded-full bg-line overflow-hidden">
-              <div className="h-full bg-bad" style={{ width: `${(l.monthly / max) * 100}%` }} />
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ChatCard>
+      <Ask>{m.hero.chatQuestion}</Ask>
+      <Answer>
+        <p>
+          Food cost is <strong>{pct(report.foodCostPct)}</strong> against your {pct(report.targetPct)} target, down from{" "}
+          {pct(report.lastWeekPct)} last week. The biggest leaks:
+        </p>
+        <ul className="space-y-1">
+          {top.map((l) => (
+            <li key={l.rank} className="flex justify-between gap-3">
+              <span>{l.leak}</span>
+              <strong className="tabular-nums whitespace-nowrap">{usd(l.monthly)}/mo</strong>
+            </li>
+          ))}
+        </ul>
+        <p>
+          Start with portions: holding brisket plates to the 8 oz spec is worth about{" "}
+          <strong>{usd(portionLeak.monthly)}/month</strong>.
+        </p>
+      </Answer>
+    </ChatCard>
   );
 }
 
@@ -188,15 +211,31 @@ function Hero() {
             <div className="h-1 w-8 rounded-full bg-accent" />
             <h3 className="mt-3 text-lg font-bold">{b.title}</h3>
             <p className="mt-1 text-muted">{b.text}</p>
-            {i === 2 && (
+            {i === 0 && (
               <p className="mt-2 text-sm font-semibold text-good">
-                Core is {usd(config.corePrice)}/month. The sample report finds about {usd(leakTotal)}/month.
+                Core is {usd(config.corePrice)}/month. The sample data shows about {usd(leakTotal)}/month in savings.
               </p>
             )}
           </div>
         ))}
       </div>
     </section>
+  );
+}
+
+function Audience() {
+  return (
+    <Section tone="alt">
+      <SectionHead title={m.audience.title} />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {m.audience.items.map((a) => (
+          <div key={a.name} className="rounded-xl border border-line bg-bg p-5">
+            <h3 className="text-lg font-bold">{a.name}</h3>
+            <p className="mt-1 text-muted">{a.text}</p>
+          </div>
+        ))}
+      </div>
+    </Section>
   );
 }
 
@@ -208,11 +247,11 @@ function Results() {
     { value: String(priceAlerts.length), label: "Vendor price alerts this week" },
   ];
   return (
-    <Section tone="alt">
+    <Section>
       <SectionHead title={m.results.title} sub={m.results.sub} />
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s) => (
-          <div key={s.label} className="rounded-xl border border-line bg-bg p-5">
+          <div key={s.label} className="rounded-xl border border-line bg-surface p-5">
             <div className="text-4xl font-bold tabular-nums">{s.value}</div>
             <div className="mt-1 text-sm text-muted">{s.label}</div>
           </div>
@@ -229,11 +268,11 @@ function Results() {
 
 function HowItWorks() {
   return (
-    <Section id="how">
+    <Section id="how" tone="alt">
       <SectionHead title={m.how.title} />
       <ol className="grid gap-6 md:grid-cols-3">
         {m.how.steps.map((s, i) => (
-          <li key={s.title} className="relative rounded-xl border border-line bg-surface p-6">
+          <li key={s.title} className="rounded-xl border border-line bg-bg p-6">
             <div className="text-4xl font-bold text-accent/40 leading-none">{i + 1}</div>
             <h3 className="mt-2 text-xl font-bold">{s.title}</h3>
             <p className="mt-2 text-muted">{s.text}</p>
@@ -244,9 +283,198 @@ function HowItWorks() {
   );
 }
 
-function ReportVisual() {
+function AdvisorVisual() {
+  const trends = priceAlerts.slice(0, 2).map((a) => `${a.item.replace(/ \(.*\)/, "")} +${pct(a.change)}`);
   return (
-    <PhoneFrame contactName={config.contact.name}>
+    <ChatCard>
+      <Ask>What should I change this week, and what is trending?</Ask>
+      <Answer>
+        <p className="font-semibold">{report.actionsIntro}</p>
+        <ol className="list-decimal pl-5 space-y-1.5">
+          {report.actions.map((a) => (
+            <li key={a}>{a}</li>
+          ))}
+        </ol>
+        <p>
+          <strong>Trend:</strong> {trends.join(", ")} week over week. Expect menu costs to keep rising unless prices are adjusted.
+        </p>
+      </Answer>
+    </ChatCard>
+  );
+}
+
+function DashboardVisual() {
+  const [sel, setSel] = useState(0);
+  const lastDelta = report.lastWeekPct - report.foodCostPct;
+  const tiles = [
+    {
+      label: "Food cost",
+      value: pct(report.foodCostPct),
+      sub: `Target ${pct(report.targetPct)}`,
+      question: "Why is food cost above target?",
+      answer: `It is down ${lastDelta.toFixed(1)} points from ${pct(report.lastWeekPct)} last week but still ${(report.foodCostPct - report.targetPct).toFixed(1)} points over target. Main drivers: brisket is up ${brisketChange} at ${brisketAlert.vendor} while the plate price has not moved, and plates average ${brisketPlate.portionNote?.actualOz} oz against the ${brisketPlate.portionNote?.specOz} oz spec.`,
+    },
+    {
+      label: "Top revenue item",
+      value: usd(topRevenue.revenue),
+      sub: `${topRevenue.name.replace(/ \(.*\)/, "")} / week`,
+      question: `Why is the ${topRevenue.name.replace(/ \(.*\)/, "").toLowerCase()} my top earner?`,
+      answer: `It sells ${topRevenue.soldPerWeek} a week at ${usd(topRevenue.price)}. It also runs at ${pct(topRevenue.p)} food cost, so it is the best place to hold portions or raise the price.`,
+    },
+    {
+      label: "Biggest cost",
+      value: usd(topCost.weeklyCost),
+      sub: `${topCost.name.replace(/ \(.*\)/, "")} ingredients / week`,
+      question: "Why is this my biggest expense?",
+      answer: `${topCost.soldPerWeek} sold a week at ${usd(topCost.costPerPlate)} per plate adds up. Brisket is up ${brisketChange} at ${brisketAlert.vendor}, and plates are running over the ${brisketPlate.portionNote?.specOz} oz spec.`,
+    },
+    {
+      label: "Price alerts",
+      value: String(priceAlerts.length),
+      sub: "items up over 5%",
+      question: "Which prices went up?",
+      answer: priceAlerts.map((a) => `${a.item.replace(/ \(.*\)/, "")} (+${pct(a.change)})`).join(", ") + ".",
+    },
+  ];
+  const t = tiles[sel];
+  return (
+    <div className="rounded-2xl border border-line bg-surface p-4 shadow-xl">
+      <div className="grid grid-cols-2 gap-3">
+        {tiles.map((x, i) => (
+          <button
+            key={x.label}
+            type="button"
+            aria-pressed={sel === i}
+            onClick={() => setSel(i)}
+            className={`rounded-xl border p-3 text-left ${sel === i ? "border-accent bg-bg" : "border-line hover:border-accent"}`}
+          >
+            <div className="text-xs font-semibold uppercase tracking-wide text-muted">{x.label}</div>
+            <div className="mt-1 text-2xl font-bold tabular-nums">{x.value}</div>
+            <div className="text-xs text-muted">{x.sub}</div>
+          </button>
+        ))}
+      </div>
+      <div className="mt-4 space-y-2 text-sm">
+        <Ask>{t.question}</Ask>
+        <Answer>
+          <p>{t.answer}</p>
+        </Answer>
+      </div>
+      <p className="mt-3 text-xs text-muted">Click a metric to ask why.</p>
+    </div>
+  );
+}
+
+function InventoryVisual() {
+  return (
+    <div className="rounded-2xl border border-line bg-surface p-5 shadow-xl">
+      <div className="flex items-center justify-between">
+        <div className="font-semibold">1 × {brisketPlate.name.replace(/ \(.*\)/, "")} sold</div>
+        <div className="font-bold tabular-nums">{usdCents(brisketPlate.price)}</div>
+      </div>
+      <div className="mt-3 text-xs font-semibold uppercase tracking-wide text-muted">Inventory used</div>
+      <ul className="mt-2 divide-y divide-line text-sm">
+        {brisketPlate.recipe.slice(0, 5).map((r) => (
+          <li key={r.item} className="flex justify-between gap-3 py-1.5">
+            <span>{r.item.replace(/ \(.*\)/, "")}</span>
+            <span className="tabular-nums text-bad font-semibold">−{r.amount}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-3 rounded-lg bg-good-bg text-good px-3 py-2 text-sm font-semibold">
+        Stock updated. Cost per plate {usdCents(brisketPlate.costPerPlate)}.
+      </p>
+    </div>
+  );
+}
+
+function SuppliersVisual() {
+  const f = feature<{ order: { number: string; vendor: string; status: string; eta: string; miles: number; progress: number }; suggestion: string }>("suppliers");
+  return (
+    <div className="space-y-3">
+      <div className="rounded-2xl border border-line bg-surface p-5 shadow-xl">
+        <div className="flex items-center justify-between text-sm">
+          <span className="font-semibold">
+            {f.order.number} · {f.order.vendor}
+          </span>
+          <span className="rounded-full bg-good-bg text-good px-2.5 py-0.5 text-xs font-bold uppercase">{f.order.status}</span>
+        </div>
+        <div className="mt-4 h-2 rounded-full bg-line overflow-hidden">
+          <div className="h-full bg-accent" style={{ width: `${f.order.progress}%` }} />
+        </div>
+        <div className="mt-2 flex justify-between text-sm text-muted">
+          <span>{f.order.miles} miles away</span>
+          <span>
+            Arrives <strong className="text-ink">{f.order.eta}</strong>
+          </span>
+        </div>
+      </div>
+      <div className="rounded-2xl border border-line bg-watch-bg text-watch p-4 text-sm font-medium shadow-lg">
+        <span className="font-bold">AI suggestion: </span>
+        {f.suggestion.replace("{brisketChange}", brisketChange)}
+      </div>
+    </div>
+  );
+}
+
+function MarketingVisual() {
+  const f = feature<{ audience: string; steps: string[] }>("marketing");
+  const fill = (t: string) => t.replace("{topDish}", topDish.name.replace(/ \(.*\)/, "").toLowerCase()).replace("{topDishPct}", pct(topDish.p));
+  return (
+    <div className="rounded-2xl border border-line bg-surface p-5 shadow-xl">
+      <div className="text-xs font-semibold uppercase tracking-wide text-muted">Target audience</div>
+      <div className="mt-1 inline-block rounded-full bg-accent px-3 py-1 text-sm font-semibold text-bg">{f.audience}</div>
+      <div className="mt-4 text-xs font-semibold uppercase tracking-wide text-muted">Steps</div>
+      <ol className="mt-2 space-y-3">
+        {f.steps.map((st, i) => (
+          <li key={st} className="flex gap-3 text-sm">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-bg border border-line text-xs font-bold">{i + 1}</span>
+            <span>{fill(st)}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function TeamVisual() {
+  const roles = feature<{ roles: { id: string; label: string; heading: string; items: string[] }[] }>("team").roles;
+  const [active, setActive] = useState(roles[0].id);
+  const r = roles.find((x) => x.id === active)!;
+  return (
+    <div className="rounded-2xl border border-line bg-surface p-4 shadow-xl">
+      <div role="tablist" className="grid grid-cols-3 gap-1 rounded-xl bg-bg p-1">
+        {roles.map((x) => (
+          <button
+            key={x.id}
+            role="tab"
+            type="button"
+            aria-selected={active === x.id}
+            onClick={() => setActive(x.id)}
+            className={`rounded-lg py-2 text-sm font-semibold ${active === x.id ? "bg-accent text-bg" : "text-muted hover:text-ink"}`}
+          >
+            {x.label}
+          </button>
+        ))}
+      </div>
+      <div role="tabpanel" className="p-3 pt-4">
+        <div className="font-bold">{r.heading}</div>
+        <ul className="mt-3 space-y-2 text-sm">
+          {r.items.map((it) => (
+            <li key={it} className="flex gap-2">
+              <span className="text-good font-bold">✓</span>
+              <span>{it}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function MobileVisual() {
+  return (
+    <PhoneFrame contactName={config.productName}>
       <div className="max-w-[92%] rounded-2xl rounded-bl-sm bg-bubble text-bubble-ink px-3.5 py-3 text-sm leading-snug space-y-2">
         <p className="font-semibold">{report.title}</p>
         <p>
@@ -259,106 +487,30 @@ function ReportVisual() {
             <li key={a}>{a}</li>
           ))}
         </ol>
+        <p>{report.closing}</p>
       </div>
     </PhoneFrame>
   );
 }
 
-const statusTone = (p: number) =>
-  p > menu.thresholds.problemAbovePct ? "bg-bad-bg text-bad" : p >= menu.thresholds.watchAbovePct ? "bg-watch-bg text-watch" : "bg-good-bg text-good";
-const statusLabel = (p: number) =>
-  p > menu.thresholds.problemAbovePct ? "Problem" : p >= menu.thresholds.watchAbovePct ? "Watch" : "Good";
-
-function MarginsVisual() {
-  const rows = [...menu.dishes]
-    .map((d) => ({ ...d, p: (d.costPerPlate / d.price) * 100 }))
-    .sort((a, b) => b.p - a.p)
-    .slice(0, 4);
-  return (
-    <div className="rounded-xl border border-line bg-surface overflow-hidden shadow-lg">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="bg-bg text-left text-xs uppercase tracking-wide text-muted">
-            <th className="px-4 py-2.5 font-medium">Dish</th>
-            <th className="px-3 py-2.5 font-medium text-right">Food cost</th>
-            <th className="px-4 py-2.5 font-medium">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((d) => (
-            <tr key={d.id} className="border-t border-line">
-              <td className="px-4 py-2.5 font-medium">{d.name}</td>
-              <td className="px-3 py-2.5 text-right font-bold tabular-nums">{pct(d.p)}</td>
-              <td className="px-4 py-2.5">
-                <span className={`rounded-full px-2 py-0.5 text-xs font-bold uppercase ${statusTone(d.p)}`}>{statusLabel(d.p)}</span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function AlertsVisual() {
-  return (
-    <div className="space-y-3">
-      {priceAlerts.slice(0, 3).map((a) => (
-        <div key={a.item} className="rounded-xl border border-line bg-surface p-4 shadow-lg">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <div className="font-semibold leading-snug">{a.item}</div>
-              <div className="text-sm text-muted">{a.vendor}</div>
-            </div>
-            <span className="rounded-full bg-bad-bg text-bad px-2.5 py-0.5 text-sm font-bold tabular-nums">+{pct(a.change)}</span>
-          </div>
-          <div className="mt-2 text-sm tabular-nums">
-            <span className="text-muted line-through">{usdCents(a.lastWeek)}</span> → <strong>{usdCents(a.thisWeek)}</strong>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function InvoiceVisual() {
-  const flagged = invoice.lines.filter((l) => l.flag);
-  return (
-    <div className="rounded-xl border border-line bg-surface p-4 shadow-lg space-y-3">
-      <div className="flex items-center justify-between text-sm">
-        <span className="font-semibold">Invoice {invoice.invoiceNumber}</span>
-        <span className="text-muted">{invoice.date}</span>
-      </div>
-      {flagged.map((l) => (
-        <div
-          key={l.item}
-          className={`rounded-lg px-3 py-2 text-sm font-medium ${l.flag === "short" ? "bg-bad-bg text-bad" : "bg-watch-bg text-watch"}`}
-        >
-          <div className="font-semibold">{l.item}</div>
-          {l.flag === "short" && l.orderedQuantity !== undefined
-            ? `Ordered ${l.orderedQuantity}, received ${l.quantity}. Credit: ${usdCents((l.orderedQuantity - l.quantity) * l.unitPrice)}`
-            : "Price increase flagged"}
-        </div>
-      ))}
-      <div className="rounded-lg bg-good-bg text-good px-3 py-2 text-center text-sm font-bold">✓ {invoice.verifiedBadge}</div>
-    </div>
-  );
-}
-
 const VISUALS: Record<string, () => React.ReactElement> = {
-  report: ReportVisual,
-  margins: MarginsVisual,
-  alerts: AlertsVisual,
-  invoice: InvoiceVisual,
+  advisor: AdvisorVisual,
+  dashboard: DashboardVisual,
+  inventory: InventoryVisual,
+  suppliers: SuppliersVisual,
+  marketing: MarketingVisual,
+  team: TeamVisual,
+  mobile: MobileVisual,
 };
 
 function Features() {
   return (
-    <Section id="features" tone="alt">
+    <Section id="features">
       <SectionHead title={m.features.title} />
       <div className="space-y-14 sm:space-y-16">
         {m.features.items.map((f, i) => {
           const Visual = VISUALS[f.id];
+          const link = f as unknown as { route?: Route; cta?: string };
           return (
             <div key={f.id} className="grid gap-10 lg:grid-cols-2 items-center">
               <div className={i % 2 === 1 ? "lg:order-2" : ""}>
@@ -373,9 +525,11 @@ function Features() {
                     </li>
                   ))}
                 </ul>
-                <a href={href(f.route as Route)} className="mt-6 inline-block font-semibold text-accent">
-                  {f.cta} →
-                </a>
+                {link.route && link.cta && (
+                  <a href={href(link.route)} className="mt-6 inline-block font-semibold text-accent">
+                    {link.cta} →
+                  </a>
+                )}
               </div>
               <div className={`max-w-md w-full mx-auto ${i % 2 === 1 ? "lg:order-1" : ""}`}>
                 <Visual />
@@ -383,6 +537,25 @@ function Features() {
             </div>
           );
         })}
+      </div>
+    </Section>
+  );
+}
+
+function Security() {
+  return (
+    <Section id="security" tone="alt">
+      <SectionHead title={m.security.title} sub={m.security.sub} />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {m.security.items.map((it) => (
+          <div key={it.title} className="rounded-xl border border-line bg-bg p-5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-good-bg text-good font-bold" aria-hidden>
+              ✓
+            </div>
+            <h3 className="mt-3 text-lg font-bold">{it.title}</h3>
+            <p className="mt-1 text-muted">{it.text}</p>
+          </div>
+        ))}
       </div>
     </Section>
   );
@@ -577,9 +750,11 @@ export default function Landing() {
       <TopNav />
       <main>
         <Hero />
+        <Audience />
         <Results />
         <HowItWorks />
         <Features />
+        <Security />
         <Works />
         <Pricing />
         <Faq />

@@ -157,7 +157,7 @@ export default function InvoiceCapture() {
             </tbody>
           </table>
         </div>
-        <div className="rounded-xl bg-good-bg text-good px-4 py-3 text-center font-bold">✓ {invoice.verifiedBadge}</div>
+        <div className="rounded-xl bg-good-bg text-good px-4 py-3 text-center font-bold">✓ {invoice.readBadge}: {lines.length} lines, {lines.filter((l) => l.flag).length} flagged</div>
       </section>
       </div>
     </div>

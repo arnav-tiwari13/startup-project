@@ -13,7 +13,7 @@ export default function WeeklyReport() {
     <div className="grid gap-10 lg:grid-cols-2 items-start">
       <div>
         <p className="text-sm font-semibold uppercase tracking-wide text-muted mb-3">What the owner receives</p>
-        <PhoneFrame contactName={config.contact.name}>
+        <PhoneFrame contactName={config.productName}>
           <div className="max-w-[92%] rounded-2xl rounded-bl-sm bg-bubble text-bubble-ink px-3.5 py-3 text-[15px] leading-snug space-y-3">
             <p className="font-semibold">{report.title}</p>
             <p>
@@ -29,7 +29,7 @@ export default function WeeklyReport() {
               </ol>
             </div>
             <p>
-              {report.closing} - {config.contact.name}
+              {report.closing}
             </p>
           </div>
         </PhoneFrame>

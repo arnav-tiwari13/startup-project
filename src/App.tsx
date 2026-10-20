@@ -1,4 +1,6 @@
 import Layout from "./components/Layout";
+import SignInGate from "./components/SignInGate";
+import { useSession } from "./auth";
 import config from "./data/config.json";
 import restaurant from "./data/restaurant.json";
 import { useRoute, type Route } from "./router";
@@ -22,8 +24,11 @@ const titleFor = (route: Exclude<Route, "home" | "overview">) => config.screens.
 
 export default function App() {
   const route = useRoute();
+  const { session, loading } = useSession();
 
   if (route === "home") return <Landing />;
+  if (loading) return null;
+  if (!session) return <SignInGate />;
 
   if (route === "overview") {
     return (

@@ -1,6 +1,7 @@
 import { ADVISOR_CONFIG } from "./config.ts";
 import { runAdvisorTurn, type ApiMessage, type ModelClient } from "./agent.ts";
 import type { DataSourceFactory } from "./data-source.ts";
+import { describeError } from "./errors.ts";
 import { checkRateLimit, conversationHasRoom, validateUserMessage } from "./limits.ts";
 import type { AdvisorStore } from "./store.ts";
 import { TOOL_DEFINITIONS } from "./tools.ts";
@@ -87,8 +88,8 @@ export async function handleChat(
     }
     emit({ type: "done" });
   } catch (err) {
-    // Log the error class only: provider errors can carry request details we don't want in logs.
-    console.error("advisor model error:", err instanceof Error ? err.name : "unknown");
+    // Log a redacted description (type, status, short message) so problems can be diagnosed without leaking secrets.
+    console.error("advisor model error:", describeError(err));
     fail("model_error", "The advisor ran into a problem. Please try again.");
   }
 }

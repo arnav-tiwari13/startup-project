@@ -7,6 +7,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { createAnthropicClient } from "../_shared/advisor/anthropic.ts";
 import { resolveModelSettings } from "../_shared/advisor/config.ts";
+import { describeError } from "../_shared/advisor/errors.ts";
 import { createRestaurantData } from "../_shared/advisor/data-source.ts";
 import { handleChat, type AdvisorEvent } from "../_shared/advisor/handler.ts";
 import { SupabaseAdvisorStore } from "../_shared/advisor/supabase-store.ts";
@@ -76,7 +77,7 @@ Deno.serve(async (req) => {
       try {
         await handleChat(deps, { userId, message: body.message, conversationId: body.conversationId }, send);
       } catch (err) {
-        console.error("advisor failure:", err instanceof Error ? err.name : "unknown");
+        console.error("advisor failure:", describeError(err));
         send({ type: "error", code: "model_error", message: "Something went wrong. Please try again." });
       } finally {
         controller.close();

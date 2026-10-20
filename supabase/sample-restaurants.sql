@@ -11,5 +11,5 @@ on conflict (id) do nothing;
 insert into public.restaurant_members (restaurant_id, user_id, role)
 select '00000000-0000-4000-8000-000000000001', id, 'owner'
 from auth.users
-where email = 'YOUR_EMAIL@example.com'
+where email = 'arnavtiwari54321@gmail.com'
 on conflict do nothing;

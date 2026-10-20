@@ -119,3 +119,17 @@ describe("configuration", () => {
     expect(resolveModelSettings({}).fallbacks).toBe(true);
   });
 });
+
+describe("error descriptions for logs", () => {
+  it("includes type, status and message but redacts keys and tokens", async () => {
+    const { describeError } = await import("../../supabase/functions/_shared/advisor/errors.ts");
+    const err = Object.assign(new Error("401 invalid x-api-key sk-ant-api03-SECRETVALUE and Bearer abc.def.ghi"), { name: "AuthenticationError", status: 401 });
+    const out = describeError(err);
+    expect(out).toContain("AuthenticationError");
+    expect(out).toContain("status 401");
+    expect(out).toContain("invalid x-api-key");
+    expect(out).not.toContain("SECRETVALUE");
+    expect(out).not.toContain("abc.def.ghi");
+    expect(describeError("not an error")).toBe("unknown error");
+  });
+});

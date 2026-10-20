@@ -11,7 +11,8 @@ import PhoneFrame from "../components/PhoneFrame";
 import { coreOffer, pct, priceLabel, usd, usdCents } from "../format";
 import { href, type Route } from "../router";
 import { scrollToId } from "../scroll";
-import { signInWithGoogle, signOut, useSession } from "../auth";
+import AuthModal from "../components/AuthModal";
+import { signOut, useSession } from "../auth";
 import { authConfigured } from "../supabase";
 
 const btnPrimary = "inline-flex items-center justify-center rounded-lg bg-accent px-5 py-3 font-semibold text-bg hover:opacity-90";
@@ -56,6 +57,7 @@ function SectionHead({ title, sub }: { title: string; sub?: string }) {
 function TopNav() {
   const [open, setOpen] = useState(false);
   const { session } = useSession();
+  const [authOpen, setAuthOpen] = useState(false);
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-surface/95 backdrop-blur">
       <div className="mx-auto max-w-6xl px-4 sm:px-8 h-16 flex items-center gap-6">
@@ -79,8 +81,8 @@ function TopNav() {
                 Sign out{session.user.email ? ` (${session.user.email})` : ""}
               </button>
             ) : (
-              <button type="button" onClick={() => signInWithGoogle()} className="text-sm font-semibold px-3 py-2 hover:text-accent">
-                Sign in with Google
+              <button type="button" onClick={() => setAuthOpen(true)} className="text-sm font-semibold px-3 py-2 hover:text-accent">
+                Sign In
               </button>
             ))}
           <Anchor id="signup" className={`${btnPrimary} !py-2 text-sm`}>
@@ -118,6 +120,7 @@ function TopNav() {
           </a>
         </nav>
       )}
+      {authOpen && !session && <AuthModal onClose={() => setAuthOpen(false)} />}
     </header>
   );
 }

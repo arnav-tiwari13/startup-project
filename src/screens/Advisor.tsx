@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { ADVISOR_CONFIG } from "../../supabase/functions/_shared/advisor/config.ts";
 import { AdvisorRequestError, streamAdvisor } from "../advisor/client";
+import restaurant from "../data/restaurant.json";
 import { parseBlocks, toolLabel, type Inline } from "../advisor/format";
 
 interface Msg {
@@ -131,18 +132,20 @@ export default function Advisor() {
   const lastIsStreaming = busy && messages[messages.length - 1]?.role === "assistant";
 
   return (
-    <div className="flex h-[calc(100dvh-17rem)] min-h-[26rem] lg:h-[calc(100dvh-13rem)] lg:min-h-[28rem] max-w-3xl flex-col rounded-2xl border border-line bg-surface">
-      <div className="flex items-center justify-between border-b border-line px-4 py-2.5">
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="flex items-center justify-between border-b border-line px-4 py-3 sm:px-6">
         <div className="flex items-center gap-2 text-sm font-semibold">
           <span className="h-2 w-2 rounded-full bg-good" aria-hidden />
           AI advisor
+          <span className="font-normal text-muted">· {restaurant.name}</span>
         </div>
         <button type="button" onClick={newChat} disabled={messages.length === 0 && !busy} className="text-sm font-medium text-accent disabled:opacity-40">
           New chat
         </button>
       </div>
 
-      <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4" aria-live="polite">
+      <div className="min-h-0 flex-1 overflow-y-auto" aria-live="polite">
+        <div className="mx-auto w-full max-w-3xl space-y-4 px-4 py-6 sm:px-6">
         {messages.length === 0 && (
           <div className="space-y-4">
             <p className="text-muted">
@@ -183,9 +186,11 @@ export default function Advisor() {
           <div role="alert" className="rounded-xl bg-bad-bg px-3.5 py-2.5 text-sm font-medium text-bad">{error}</div>
         )}
         <div ref={bottomRef} />
+        </div>
       </div>
 
-      <form onSubmit={onSubmit} className="border-t border-line p-3">
+      <form onSubmit={onSubmit} className="border-t border-line">
+        <div className="mx-auto w-full max-w-3xl px-4 py-3 sm:px-6">
         <div className="flex items-end gap-2">
           <textarea
             value={input}
@@ -211,6 +216,7 @@ export default function Advisor() {
           <span className={tooLong ? "font-semibold text-bad" : ""}>
             {input.length}/{ADVISOR_CONFIG.maxMessageChars}
           </span>
+        </div>
         </div>
       </form>
     </div>

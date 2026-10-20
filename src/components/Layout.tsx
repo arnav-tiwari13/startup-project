@@ -31,22 +31,22 @@ function Icon({ route }: { route: Route }) {
 }
 
 // Fade text that would otherwise be clipped mid-word while the sidebar is collapsed.
-const revealOnOpen = "opacity-0 transition-opacity duration-300 group-hover/side:opacity-100 group-focus-within/side:opacity-100 motion-reduce:transition-none";
+const revealOnOpen = "opacity-0 transition-opacity duration-300 group-hover/side:opacity-100 group-has-[:focus-visible]/side:opacity-100 motion-reduce:transition-none";
 
-export default function Layout({ route, title, children }: { route: Route; title: string; children: ReactNode }) {
+export default function Layout({ route, title, children, fullBleed = false }: { route: Route; title: string; children: ReactNode; fullBleed?: boolean }) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className={`${fullBleed ? "h-dvh" : "min-h-screen"} flex flex-col`}>
       <div className="bg-watch-bg text-watch text-center text-xs font-semibold tracking-wide uppercase py-1.5 px-4">
         {config.demoLabel}
       </div>
 
-      <div className="flex flex-1">
+      <div className={`flex flex-1 ${fullBleed ? "min-h-0" : ""}`}>
         {/* Reserves a slim strip. The sidebar inside widens over the page on hover or keyboard focus, so content never shifts. */}
         <div className="hidden lg:block relative w-14 shrink-0 z-30">
-          <div className="sticky top-0 h-screen">
+          <div className={`sticky top-0 ${fullBleed ? "h-full" : "h-screen"}`}>
             <aside
               aria-label="Dashboard navigation"
-              className="group/side absolute left-0 top-0 h-full w-14 overflow-hidden border-r border-line bg-surface transition-[width,box-shadow] duration-300 ease-out hover:w-64 hover:shadow-2xl focus-within:w-64 focus-within:shadow-2xl motion-reduce:transition-none"
+              className="group/side absolute left-0 top-0 h-full w-14 overflow-hidden border-r border-line bg-surface transition-[width,box-shadow] duration-300 ease-out hover:w-64 hover:shadow-2xl has-[:focus-visible]:w-64 has-[:focus-visible]:shadow-2xl motion-reduce:transition-none"
             >
               <div className="flex h-full w-64 flex-col px-3 py-6">
                 <a href={href("home")} className="flex items-center gap-3 text-xl font-bold leading-tight" aria-label={config.productName}>
@@ -70,7 +70,7 @@ export default function Layout({ route, title, children }: { route: Route; title
                         aria-current={active ? "page" : undefined}
                         className={`flex items-center gap-3 rounded-lg text-sm font-medium ${
                           active
-                            ? "text-ink group-hover/side:bg-accent group-hover/side:text-bg group-focus-within/side:bg-accent group-focus-within/side:text-bg"
+                            ? "text-ink group-hover/side:bg-accent group-hover/side:text-bg group-has-[:focus-visible]/side:bg-accent group-has-[:focus-visible]/side:text-bg"
                             : "text-ink hover:bg-bg"
                         }`}
                       >
@@ -88,7 +88,7 @@ export default function Layout({ route, title, children }: { route: Route; title
           </div>
         </div>
 
-        <div className="flex-1 min-w-0 flex flex-col">
+        <div className={`flex-1 min-w-0 flex flex-col ${fullBleed ? "min-h-0" : ""}`}>
           <header className="lg:hidden border-b border-line bg-surface">
             <div className="px-4 pt-3 flex items-center justify-between gap-3">
               <a href={href("home")} className="font-bold text-lg leading-tight">
@@ -105,19 +105,25 @@ export default function Layout({ route, title, children }: { route: Route; title
             </nav>
           </header>
 
-          <main className="flex-1 w-full max-w-6xl px-4 sm:px-8 lg:px-10 py-8">
-            <div className="mb-6">
-              <h1 className="text-2xl sm:text-3xl font-bold">{title}</h1>
-              <p className="text-sm text-muted mt-1">
-                {restaurant.name} · {restaurant.location} · {restaurant.weekLabel}
-              </p>
-            </div>
-            {children}
-          </main>
+          {fullBleed ? (
+            <main className="flex min-h-0 w-full flex-1 flex-col">{children}</main>
+          ) : (
+            <>
+              <main className="flex-1 w-full max-w-6xl px-4 sm:px-8 lg:px-10 py-8">
+                <div className="mb-6">
+                  <h1 className="text-2xl sm:text-3xl font-bold">{title}</h1>
+                  <p className="text-sm text-muted mt-1">
+                    {restaurant.name} · {restaurant.location} · {restaurant.weekLabel}
+                  </p>
+                </div>
+                {children}
+              </main>
 
-          <footer className="border-t border-line py-4 px-4 sm:px-8 lg:px-10 text-xs text-muted">
-            {config.demoLabel} · {restaurant.name} is a fictional restaurant
-          </footer>
+              <footer className="border-t border-line py-4 px-4 sm:px-8 lg:px-10 text-xs text-muted">
+                {config.demoLabel} · {restaurant.name} is a fictional restaurant
+              </footer>
+            </>
+          )}
         </div>
       </div>
     </div>

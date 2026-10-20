@@ -42,7 +42,7 @@ export default function App() {
 
   const Screen = SCREENS[route];
   return (
-    <Layout route={route} title={titleFor(route)}>
+    <Layout route={route} title={titleFor(route)} fullBleed={route === "advisor"}>
       <Screen />
     </Layout>
   );

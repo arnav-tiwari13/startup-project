@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import config from "../data/config.json";
 import { signInWithGoogle } from "../auth";
 
@@ -13,7 +14,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
 
   const signingIn = mode === "signin";
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
       onClick={onClose}
@@ -55,6 +56,7 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
           </button>
         </p>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

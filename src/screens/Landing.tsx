@@ -58,7 +58,7 @@ function TopNav() {
   const { session } = useSession();
   const [authOpen, setAuthOpen] = useState(false);
   return (
-    <header className="sticky top-0 z-20 border-b border-line bg-surface/95 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b border-line bg-surface">
       <div className="mx-auto max-w-6xl px-4 sm:px-8 h-16 flex items-center gap-6">
         <a href={href("home")} className="text-xl font-bold">
           {config.productName}

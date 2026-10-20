@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import config from "../data/config.json";
 import restaurant from "../data/restaurant.json";
 import { href, type Route } from "../router";
+import SubscribeButton from "./SubscribeButton";
 
 const NAV: { route: Route; title: string }[] = [
   { route: "overview", title: "Overview" },
@@ -82,7 +83,8 @@ export default function Layout({ route, title, children, fullBleed = false }: { 
                     );
                   })}
                 </nav>
-                <p className={`mt-6 text-xs text-muted ${revealOnOpen}`}>{config.contact.line}</p>
+                <SubscribeButton className={`mt-6 ${revealOnOpen}`} />
+                <p className={`mt-4 text-xs text-muted ${revealOnOpen}`}>{config.contact.line}</p>
               </div>
             </aside>
           </div>
@@ -96,6 +98,7 @@ export default function Layout({ route, title, children, fullBleed = false }: { 
               </a>
               <span className="text-sm text-muted">{restaurant.name}</span>
             </div>
+            <SubscribeButton className="px-4 pt-2" />
             <nav className="flex gap-1 overflow-x-auto px-3 py-2">
               {NAV.map((n) => (
                 <a key={n.route} href={href(n.route)} className={`${linkClass(n.route === route)} whitespace-nowrap`}>

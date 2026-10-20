@@ -6,6 +6,11 @@
   },
   "screens": [
     {
+      "route": "advisor",
+      "title": "AI advisor",
+      "blurb": "Ask what to change, and why, from your own numbers."
+    },
+    {
       "route": "report",
       "title": "Weekly report",
       "blurb": "The text you get every week: what to do next."

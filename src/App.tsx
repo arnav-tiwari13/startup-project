@@ -4,6 +4,7 @@ import { useSession } from "./auth";
 import config from "./data/config.json";
 import restaurant from "./data/restaurant.json";
 import { useRoute, type Route } from "./router";
+import Advisor from "./screens/Advisor";
 import AuditResult from "./screens/AuditResult";
 import Home from "./screens/Home";
 import Landing from "./screens/Landing";
@@ -13,6 +14,7 @@ import PriceAlerts from "./screens/PriceAlerts";
 import WeeklyReport from "./screens/WeeklyReport";
 
 const SCREENS: Record<Exclude<Route, "home" | "overview">, () => React.ReactElement> = {
+  advisor: Advisor,
   report: WeeklyReport,
   margins: MenuMargins,
   audit: AuditResult,

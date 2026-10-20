@@ -1,0 +1,7 @@
+# Minimal config for deploying the advisor Edge Function with the Supabase CLI.
+project_id = "pnouqpnadokuunxsmgsn"
+
+[functions.advisor]
+# The function verifies the signed-in user itself (auth.getUser) and enforces access with
+# row-level security, so the gateway's own JWT check is turned off.
+verify_jwt = false

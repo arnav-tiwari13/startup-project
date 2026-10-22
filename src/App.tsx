@@ -12,6 +12,7 @@ import Landing from "./screens/Landing";
 import InvoiceCapture from "./screens/InvoiceCapture";
 import MenuMargins from "./screens/MenuMargins";
 import PriceAlerts from "./screens/PriceAlerts";
+import Settings from "./screens/Settings";
 import WeeklyReport from "./screens/WeeklyReport";
 
 const SCREENS: Record<Exclude<Route, "home" | "overview">, () => React.ReactElement> = {
@@ -21,9 +22,10 @@ const SCREENS: Record<Exclude<Route, "home" | "overview">, () => React.ReactElem
   audit: AuditResult,
   alerts: PriceAlerts,
   invoice: InvoiceCapture,
+  settings: Settings,
 };
 
-const titleFor = (route: Exclude<Route, "home" | "overview">) => config.screens.find((s) => s.route === route)?.title ?? "";
+const titleFor = (route: Exclude<Route, "home" | "overview">) => route === "settings" ? "Settings" : (config.screens.find((s) => s.route === route)?.title ?? "");
 
 function AppRoutes() {
   const route = useRoute();

@@ -20,6 +20,7 @@ const ICON_PATHS: Record<Route, string> = {
   margins: "M3 5h18v14H3z M3 10h18 M9 5v14",
   audit: "M12 2v20 M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6",
   alerts: "M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9 M13.7 21a2 2 0 0 1-3.4 0",
+  settings: "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z",
   invoice: "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6 M8 13h8 M8 17h8",
 };
 
@@ -32,6 +33,19 @@ function Icon({ route }: { route: Route }) {
 }
 
 // Fade text that would otherwise be clipped mid-word while the sidebar is collapsed.
+function SettingsLink({ active }: { active: boolean }) {
+  return (
+    <a
+      href={href("settings")}
+      aria-label="Settings"
+      aria-current={active ? "page" : undefined}
+      className={`flex h-9 w-9 items-center justify-center rounded-full border border-line transition hover:border-accent hover:text-accent ${active ? "bg-accent/10 text-accent" : "bg-surface text-muted"}`}
+    >
+      <Icon route="settings" />
+    </a>
+  );
+}
+
 const revealOnOpen = "opacity-0 transition-opacity duration-300 group-hover/side:opacity-100 group-has-[:focus-visible]/side:opacity-100 motion-reduce:transition-none";
 
 export default function Layout({ route, title, children, fullBleed = false }: { route: Route; title: string; children: ReactNode; fullBleed?: boolean }) {
@@ -91,12 +105,16 @@ export default function Layout({ route, title, children, fullBleed = false }: { 
         </div>
 
         <div className={`flex-1 min-w-0 flex flex-col ${fullBleed ? "min-h-0" : ""}`}>
+          <div className="hidden lg:flex justify-end border-b border-line bg-surface px-6 py-2">
+            <SettingsLink active={route === "settings"} />
+          </div>
           <header className="lg:hidden border-b border-line bg-surface">
             <div className="px-4 pt-3 flex items-center justify-between gap-3">
               <a href={href("home")} className="font-bold text-lg leading-tight">
                 {config.productName}
               </a>
-              <span className="text-sm text-muted">{restaurant.name}</span>
+              <span className="ml-auto text-sm text-muted">{restaurant.name}</span>
+              <SettingsLink active={route === "settings"} />
             </div>
             <SubscribeButton className="px-4 pt-2" />
             <nav className="flex gap-1 overflow-x-auto px-3 py-2">

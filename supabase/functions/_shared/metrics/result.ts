@@ -1,6 +1,8 @@
 /** Why a number could not be computed. The UI shows a "missing data" state for these instead of a wrong number. */
 export type MissingReason =
   | "no_sales"
+  | "no_labor"
+  | "no_purchases"
   | "no_price"
   | "no_previous_period"
   | "no_recipe"
@@ -18,6 +20,8 @@ export const isOk = (m: Metric): m is { ok: true; value: number } => m.ok;
 
 export const MISSING_LABEL: Record<MissingReason, string> = {
   no_sales: "No sales in this period",
+  no_labor: "No labor entered for this period",
+  no_purchases: "No invoices in this period",
   no_price: "No menu price set",
   no_previous_period: "Nothing to compare to",
   no_recipe: "Recipe is missing",

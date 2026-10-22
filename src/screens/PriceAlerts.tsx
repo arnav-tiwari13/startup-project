@@ -15,7 +15,7 @@ export default function PriceAlerts() {
         later.
       </p>
 
-      <div className="rounded-xl border border-line bg-surface overflow-x-auto">
+      <div className="rounded-2xl border border-line bg-surface shadow-card overflow-x-auto">
         <table className="w-full text-sm min-w-[56rem]">
           <thead>
             <tr className="bg-bg text-left text-xs uppercase tracking-wide text-muted">

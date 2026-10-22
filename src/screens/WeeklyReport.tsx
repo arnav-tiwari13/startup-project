@@ -39,7 +39,7 @@ export default function WeeklyReport() {
         <p className="text-muted text-lg">
           No spreadsheets, no logins. A short text every week with just what to do next, backed by the numbers.
         </p>
-        <section className="rounded-xl border border-line bg-surface p-5 space-y-4">
+        <section className="rounded-2xl border border-line bg-surface shadow-card p-5 space-y-4">
           <h2 className="text-lg font-bold">The numbers behind the text</h2>
           <CostBar label="This week" value={report.foodCostPct} scale={scale} tone="bg-watch" />
           <CostBar label="Last week" value={report.lastWeekPct} scale={scale} tone="bg-bad" />

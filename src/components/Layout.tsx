@@ -10,7 +10,7 @@ const NAV: { route: Route; title: string }[] = [
 ];
 
 const linkClass = (active: boolean) =>
-  `block rounded-lg px-3 py-2 text-sm font-medium ${active ? "bg-accent text-bg" : "text-ink hover:bg-bg"}`;
+  `block rounded-full px-3.5 py-2 text-sm font-medium ${active ? "bg-accent text-bg" : "text-muted hover:bg-bg hover:text-ink"}`;
 
 const ICON_PATHS: Record<Route, string> = {
   home: "M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z",
@@ -37,7 +37,7 @@ const revealOnOpen = "opacity-0 transition-opacity duration-300 group-hover/side
 export default function Layout({ route, title, children, fullBleed = false }: { route: Route; title: string; children: ReactNode; fullBleed?: boolean }) {
   return (
     <div className={`${fullBleed ? "h-dvh" : "min-h-screen"} flex flex-col`}>
-      <div className="bg-watch-bg text-watch text-center text-xs font-semibold tracking-wide uppercase py-1.5 px-4">
+      <div className="border-b border-line bg-accent/10 text-accent text-center text-[11px] font-semibold tracking-widest uppercase py-1.5 px-4">
         {config.demoLabel}
       </div>
 
@@ -71,8 +71,8 @@ export default function Layout({ route, title, children, fullBleed = false }: { 
                         aria-current={active ? "page" : undefined}
                         className={`flex items-center gap-3 rounded-lg text-sm font-medium ${
                           active
-                            ? "text-ink group-hover/side:bg-accent group-hover/side:text-bg group-has-[:focus-visible]/side:bg-accent group-has-[:focus-visible]/side:text-bg"
-                            : "text-ink hover:bg-bg"
+                            ? "text-ink group-hover/side:bg-accent/10 group-hover/side:text-accent group-has-[:focus-visible]/side:bg-accent/10 group-has-[:focus-visible]/side:text-accent"
+                            : "text-muted hover:bg-bg hover:text-ink"
                         }`}
                       >
                         <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${active ? "bg-accent text-bg" : ""}`}>
@@ -112,11 +112,11 @@ export default function Layout({ route, title, children, fullBleed = false }: { 
             <main className="flex min-h-0 w-full flex-1 flex-col">{children}</main>
           ) : (
             <>
-              <main className="flex-1 w-full max-w-6xl px-4 sm:px-8 lg:px-10 py-8">
-                <div className="mb-6">
-                  <h1 className="text-2xl sm:text-3xl font-bold">{title}</h1>
-                  <p className="text-sm text-muted mt-1">
-                    {restaurant.name} · {restaurant.location} · {restaurant.weekLabel}
+              <main className="flex-1 w-full max-w-6xl px-4 sm:px-8 lg:px-10 py-10">
+                <div className="mb-8">
+                  <h1 className="text-3xl sm:text-4xl font-bold">{title}</h1>
+                  <p className="mt-2 inline-flex flex-wrap items-center gap-x-2 rounded-full border border-line bg-surface px-3 py-1 text-xs font-medium text-muted">
+                    <span className="text-ink">{restaurant.name}</span> · {restaurant.location} · {restaurant.weekLabel}
                   </p>
                 </div>
                 {children}

@@ -1,38 +1,40 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #f6f3ee;
+  --bg: #f6f8f7;
   --surface: #ffffff;
-  --ink: #1c1917;
-  --muted: #5c554f;
-  --line: #e4dfd8;
-  --accent: #9a3412;
-  --good: #166534;
-  --watch: #a16207;
-  --bad: #b91c1c;
-  --good-bg: #dcfce7;
-  --watch-bg: #fef3c7;
-  --bad-bg: #fee2e2;
-  --bubble: #e9e9eb;
+  --ink: #10201b;
+  --muted: #55645d;
+  --line: #e0e7e3;
+  --accent: #0f766e;
+  --good: #15803d;
+  --watch: #b45309;
+  --bad: #be1e2d;
+  --good-bg: #dcf5e6;
+  --watch-bg: #fdf0d2;
+  --bad-bg: #fde4e4;
+  --bubble: #e9ecea;
   --bubble-ink: #111111;
+  --card-shadow: 0 1px 2px rgb(16 32 27 / 0.05), 0 4px 12px -4px rgb(16 32 27 / 0.08);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #14110f;
-    --surface: #1f1b18;
-    --ink: #f5f1ec;
-    --muted: #b2aaa2;
-    --line: #38322d;
-    --accent: #fb923c;
-    --good: #86efac;
-    --watch: #fcd34d;
+    --bg: #0b1210;
+    --surface: #131b18;
+    --ink: #eef4f1;
+    --muted: #9baba4;
+    --line: #25312c;
+    --accent: #2dd4bf;
+    --good: #6ee7a0;
+    --watch: #fbbf5a;
     --bad: #fca5a5;
-    --good-bg: #14331f;
-    --watch-bg: #3a2c0a;
-    --bad-bg: #3d1616;
-    --bubble: #2c2c2e;
+    --good-bg: #11301f;
+    --watch-bg: #33260a;
+    --bad-bg: #3a1618;
+    --bubble: #232b28;
     --bubble-ink: #f2f2f2;
+    --card-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px -4px rgb(0 0 0 / 0.5);
   }
 }
 
@@ -51,10 +53,19 @@
   --color-bad-bg: var(--bad-bg);
   --color-bubble: var(--bubble);
   --color-bubble-ink: var(--bubble-ink);
+  --shadow-card: var(--card-shadow);
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 body {
   background: var(--bg);
   color: var(--ink);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01", "tnum";
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.005em;
+}
+
+h1, h2, h3 {
+  letter-spacing: -0.02em;
 }

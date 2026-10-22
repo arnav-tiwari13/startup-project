@@ -1,68 +1,80 @@
-import audit from "../data/audit.json";
-import config from "../data/config.json";
-import report from "../data/weekly-report.json";
-import Stat from "../components/Stat";
-import { pct, usd } from "../format";
-import { href, type Route } from "../router";
-
-const monthlySavings = audit.leaks.reduce((sum, l) => sum + l.monthly, 0);
-const gap = report.foodCostPct - report.targetPct;
-const change = report.foodCostPct - report.lastWeekPct;
-const maxLeak = Math.max(...audit.leaks.map((l) => l.monthly));
+// Overview: customizable tables. Each table, its columns, sort, filters, grouping, the period and the
+// comparison are saved per user as a named view (see src/dashboard/controller.ts).
+import { useEffect, useState } from "react";
+import { TABLE_DEFS } from "../../supabase/functions/_shared/tables/definitions.ts";
+import { setTableVisible } from "../../supabase/functions/_shared/tables/view.ts";
+import { listRestaurants } from "../dashboard/api";
+import CustomizePanel from "../dashboard/CustomizePanel";
+import { useDashboard } from "../dashboard/hooks";
+import TableCard from "../dashboard/TableCard";
+import TargetsPanel from "../dashboard/TargetsPanel";
+import Toolbar from "../dashboard/Toolbar";
 
 export default function Home() {
-  return (
-    <div className="space-y-8">
-      <section className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <Stat
-          hero
-          label="Food cost this week"
-          value={pct(report.foodCostPct)}
-          sub={`${change < 0 ? "Down" : "Up"} ${Math.abs(change).toFixed(1)} pts from ${pct(report.lastWeekPct)}`}
-        />
-        <Stat label="Target" value={pct(report.targetPct)} sub="Where recipes say you should be" />
-        <Stat label="Gap to target" value={`${gap.toFixed(1)} pts`} tone="text-watch" sub="Still above target" />
-        <Stat label="Est. monthly savings" value={usd(monthlySavings)} tone="text-good" sub="If the top 5 leaks are closed" />
-      </section>
+  const { controller, state } = useDashboard();
+  const [panel, setPanel] = useState<null | "customize" | "targets">(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [restaurants, setRestaurants] = useState<{ id: string; name: string }[] | null>(null);
 
-      <div className="grid gap-8 lg:grid-cols-5">
-        <section className="lg:col-span-3 rounded-2xl border border-line bg-surface p-6 shadow-card">
-          <h2 className="text-lg font-bold mb-4">Where the money is going</h2>
-          <ol className="space-y-4">
-            {audit.leaks.map((l) => (
-              <li key={l.rank}>
-                <div className="flex gap-3 items-baseline">
-                  <span className="font-bold text-accent w-4">{l.rank}</span>
-                  <span className="flex-1 leading-snug">{l.leak}</span>
-                  <span className="font-bold tabular-nums">{usd(l.monthly)}</span>
-                </div>
-                <div className="mt-1.5 ml-7 h-2 rounded-full bg-line overflow-hidden">
-                  <div className="h-full rounded-full bg-bad" style={{ width: `${(l.monthly / maxLeak) * 100}%` }} />
-                </div>
-              </li>
-            ))}
-          </ol>
-        </section>
+  useEffect(() => {
+    listRestaurants().then(setRestaurants).catch(() => setRestaurants([]));
+  }, []);
 
-        <section className="lg:col-span-2">
-          <h2 className="text-lg font-bold mb-4">Explore the demo</h2>
-          <ul className="space-y-2">
-            {(config.screens as { route: Route; title: string; blurb: string }[]).map((s) => (
-              <li key={s.route}>
-                <a href={href(s.route)} className="flex items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3 shadow-card transition hover:-translate-y-0.5 hover:border-accent">
-                  <span className="flex-1">
-                    <span className="block font-semibold">{s.title}</span>
-                    <span className="block text-sm text-muted">{s.blurb}</span>
-                  </span>
-                  <span aria-hidden className="text-accent text-xl">→</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
+  if (state.status === "loading") {
+    return <p role="status" className="text-sm text-muted">Loading your dashboard{"…"}</p>;
+  }
+  if (state.status === "error") {
+    return (
+      <div role="alert" className="rounded-xl border border-bad/40 bg-bad-bg px-4 py-3 text-sm text-bad">
+        {state.message}{" "}
+        <button type="button" onClick={() => void controller.load()} className="ml-2 rounded-lg border border-bad/40 px-3 py-1 font-medium hover:bg-bad/10">Try again</button>
       </div>
+    );
+  }
+  if (restaurants !== null && restaurants.length === 0) {
+    return (
+      <section className="max-w-xl rounded-2xl border border-line bg-surface p-6 shadow-card">
+        <h2 className="text-lg font-bold">No restaurant linked yet</h2>
+        <p className="mt-2 text-sm text-muted">Your account isn't connected to a restaurant, so there is nothing to show. Once one is linked, your tables appear here.</p>
+      </section>
+    );
+  }
 
-      <p className="text-sm text-muted lg:hidden">{config.contact.line}</p>
+  const { config } = state;
+  const visible = config.tables.filter((t) => t.visible);
+  const hidden = config.tables.filter((t) => !t.visible);
+
+  return (
+    <div className="space-y-6">
+      <Toolbar state={state} controller={controller} onCustomize={() => setPanel("customize")} onTargets={() => setPanel("targets")} />
+
+      {hidden.length > 0 && (
+        <p className="flex flex-wrap items-center gap-2 text-sm text-muted">
+          Hidden:
+          {hidden.map((t) => (
+            <button
+              key={t.id} type="button" onClick={() => controller.update((c) => setTableVisible(c, t.id, true))}
+              className="rounded-full border border-line bg-surface px-3 py-1 text-xs font-medium text-ink hover:border-accent hover:text-accent"
+              aria-label={`Show ${TABLE_DEFS[t.id].title}`}
+            >
+              + {TABLE_DEFS[t.id].title}
+            </button>
+          ))}
+        </p>
+      )}
+
+      {visible.length === 0 && (
+        <section className="rounded-2xl border border-line bg-surface p-6 text-sm text-muted shadow-card">
+          Every table is hidden. Use <strong className="text-ink">Customize tables</strong> to bring some back.
+        </section>
+      )}
+
+      {visible.map((t) => (
+        <TableCard key={t.id} view={t} config={config} refreshKey={refreshKey} onChange={(fn) => controller.update(fn)} />
+      ))}
+
+      {panel === "customize" && <CustomizePanel config={config} onChange={(fn) => controller.update(fn)} onClose={() => setPanel(null)} />}
+      {panel === "targets" && <TargetsPanel restaurants={restaurants ?? []} onSaved={() => setRefreshKey((k) => k + 1)} onClose={() => setPanel(null)} />}
     </div>
   );
 }

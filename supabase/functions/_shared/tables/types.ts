@@ -40,6 +40,8 @@ export interface TableDef {
   /** Row grains the table can be grouped into. `null` default means ungrouped. */
   groupings: { id: string; label: string }[];
   defaultGroupBy: string | null;
+  /** Label for the "no grouping" choice, when the table can be shown ungrouped. Absent means it is always grouped. */
+  ungroupedLabel?: string;
   filters: FilterDef[];
 }
 

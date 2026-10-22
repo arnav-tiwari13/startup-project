@@ -12,6 +12,7 @@ export const TABLE_DEFS: Record<TableId, TableDef> = {
     defaultSort: { column: "location", dir: "asc" },
     groupings: [{ id: "location", label: "Each location" }],
     defaultGroupBy: "location",
+    ungroupedLabel: "All locations combined",
     filters: [{ id: "location", label: "Location", kind: "select" }],
     columns: [
       { id: "location", label: "Location", tooltip: "Which location. \"All locations\" adds them together.", kind: "text", defaultVisible: true, sortable: true },
@@ -53,6 +54,7 @@ export const TABLE_DEFS: Record<TableId, TableDef> = {
     defaultSort: { column: "monthly_impact", dir: "desc" },
     groupings: [{ id: "vendor", label: "Vendor" }, { id: "category", label: "Category" }],
     defaultGroupBy: null,
+    ungroupedLabel: "Each ingredient",
     filters: [
       { id: "vendor", label: "Vendor", kind: "select" },
       { id: "category", label: "Category", kind: "select" },
@@ -104,6 +106,7 @@ export const TABLE_DEFS: Record<TableId, TableDef> = {
     defaultSort: { column: "variance_dollars", dir: "desc" },
     groupings: [{ id: "vendor", label: "Vendor" }, { id: "category", label: "Category" }, { id: "location", label: "Location" }],
     defaultGroupBy: null,
+    ungroupedLabel: "Each ingredient",
     filters: [
       { id: "vendor", label: "Vendor", kind: "select" },
       { id: "category", label: "Category", kind: "select" },

@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
   const deps = {
     store: new SupabaseAdvisorStore(supabase),
     model: createAnthropicClient({ apiKey, ...settings }),
-    getData: createRestaurantData,
+    getData: createRestaurantData(supabase, userId),
     systemPrompt: buildSystemPrompt(PRODUCT_NAME),
   };
 

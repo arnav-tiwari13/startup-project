@@ -44,12 +44,12 @@ describe("data isolation between restaurants", () => {
     expect(JSON.stringify(blocks)).not.toContain("Secret Sauce");
   });
 
-  it("a data source built for A can never return B's numbers", () => {
+  it("a data source built for A can never return B's numbers", async () => {
     const a = miniData("rest-a");
-    const out = JSON.stringify([
+    const out = JSON.stringify(await Promise.all([
       executeTool(a, "get_menu_margins", {}), executeTool(a, "get_sales_summary", { period: "last_28_days" }),
       executeTool(a, "get_price_changes", { period: "last_28_days" }),
-    ]);
+    ]));
     expect(out).not.toMatch(/Secret Sauce|Smoked ham|Other Vendor/);
   });
 

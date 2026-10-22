@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  actualUsageQty, categorySpendPct, classifyMenuItem, estimatedProfitCents, foodCostPct, laborPct, marginCents, marginPct,
+  actualUsageQty, averageDailySalesCents, theoreticalFoodCostCents, categorySpendPct, classifyMenuItem, estimatedProfitCents, foodCostPct, laborPct, marginCents, marginPct,
   missing, monthlyPriceImpactCents, monthlyUsageQty, ok, pctChange, plateCostCents, pointChange, popularityThreshold,
   primeCostPct, priceChangePct, profitContributionCents, rateAgainstTarget, theoreticalUsageQty, varianceCents,
   variancePct, varianceQty, vsTarget,
@@ -172,5 +172,18 @@ describe("actual vs theoretical usage", () => {
     expect(why(varianceQty(ok(120), missing("no_recipe")))).toBe("no_recipe");
     expect(why(varianceCents(ok(20), undefined))).toBe("missing_price");
     expect(why(variancePct(ok(20), ok(0)))).toBe("no_theoretical_usage");
+  });
+});
+
+describe("theoretical food cost and average daily sales", () => {
+  it("sums plate cost x units, skips unsold items, and is missing when a sold item has no plate cost", () => {
+    expect(val(theoreticalFoodCostCents([{ plateCost: ok(350), unitsSold: 10 }, { plateCost: ok(170), unitsSold: 5 }]))).toBe(4350);
+    expect(val(theoreticalFoodCostCents([{ plateCost: ok(350), unitsSold: 10 }, { plateCost: missing("no_recipe"), unitsSold: 0 }]))).toBe(3500);
+    expect(why(theoreticalFoodCostCents([{ plateCost: missing("missing_price"), unitsSold: 3 }]))).toBe("missing_price");
+    expect(why(theoreticalFoodCostCents([{ plateCost: ok(100), unitsSold: -1 }]))).toBe("invalid_input");
+  });
+  it("average daily sales needs a positive number of days", () => {
+    expect(val(averageDailySalesCents(84_000, 7))).toBe(12_000);
+    expect(why(averageDailySalesCents(84_000, 0))).toBe("invalid_input");
   });
 });

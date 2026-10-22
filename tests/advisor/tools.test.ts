@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { executeTool, TOOL_DEFINITIONS } from "../../supabase/functions/_shared/advisor/tools.ts";
 import { isNoData } from "../../supabase/functions/_shared/advisor/types.ts";
-import { createRestaurantData } from "../../supabase/functions/_shared/advisor/data-source.ts";
+import { createMockRestaurantData } from "../../supabase/functions/_shared/advisor/data-source.ts";
 import { SAMPLE_RESTAURANT_ID_2 } from "../../supabase/functions/_shared/advisor/mock-data.ts";
 import { miniData } from "./helpers.ts";
 
@@ -75,7 +75,7 @@ describe("get_actual_vs_theoretical", () => {
   });
 
   it("reports missing data for a business with no counts at all", () => {
-    expect(isNoData(createRestaurantData(SAMPLE_RESTAURANT_ID_2).getActualVsTheoretical("last_7_days"))).toBe(true);
+    expect(isNoData(createMockRestaurantData(SAMPLE_RESTAURANT_ID_2).getActualVsTheoretical("last_7_days"))).toBe(true);
   });
 });
 
@@ -93,21 +93,21 @@ describe("get_sales_summary", () => {
   });
 
   it("reports missing data when there are no sales in the period", () => {
-    expect(isNoData(createRestaurantData("unknown-restaurant").getSalesSummary("last_7_days"))).toBe(true);
+    expect(isNoData(createMockRestaurantData("unknown-restaurant").getSalesSummary("last_7_days"))).toBe(true);
   });
 });
 
 describe("executeTool input handling", () => {
-  it("runs a tool with valid input", () => {
-    const out = executeTool(a, "get_sales_summary", { period: "last_7_days" });
+  it("runs a tool with valid input", async () => {
+    const out = await executeTool(a, "get_sales_summary", { period: "last_7_days" });
     expect(out.ok).toBe(true);
   });
-  it("rejects unknown tools, bad periods and non-object input", () => {
-    expect(executeTool(a, "delete_everything", {})).toMatchObject({ ok: false });
-    expect(executeTool(a, "get_food_cost", { period: "last_year" })).toMatchObject({ ok: false });
-    expect(executeTool(a, "get_food_cost", {})).toMatchObject({ ok: false });
-    expect(executeTool(a, "get_food_cost", "last_7_days")).toMatchObject({ ok: false });
-    expect(executeTool(a, "get_food_cost", null)).toMatchObject({ ok: false });
+  it("rejects unknown tools, bad periods and non-object input", async () => {
+    expect(await executeTool(a, "delete_everything", {})).toMatchObject({ ok: false });
+    expect(await executeTool(a, "get_food_cost", { period: "last_year" })).toMatchObject({ ok: false });
+    expect(await executeTool(a, "get_food_cost", {})).toMatchObject({ ok: false });
+    expect(await executeTool(a, "get_food_cost", "last_7_days")).toMatchObject({ ok: false });
+    expect(await executeTool(a, "get_food_cost", null)).toMatchObject({ ok: false });
   });
   it("defines exactly the five tools, none taking a restaurant identifier", () => {
     expect(TOOL_DEFINITIONS.map((t) => t.name).sort()).toEqual([

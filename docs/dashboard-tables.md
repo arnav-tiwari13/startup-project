@@ -15,7 +15,7 @@ TableCard ──POST /functions/v1/table-data──▶ table-data Edge Function
                                      run.ts → compute.ts → metrics/
 ```
 
-- **Metrics** (`supabase/functions/_shared/metrics/`): every formula, once, in whole cents. Returns a value or a reason it is missing. Tables, CSV export and (later) the AI advisor all use it. Don't write a formula anywhere else.
+- **Metrics** (`supabase/functions/_shared/metrics/`): every formula, once, in whole cents. Returns a value or a reason it is missing. Tables, CSV export and the AI advisor all use it. Don't write a formula anywhere else.
 - **Tables** (`supabase/functions/_shared/tables/`): `definitions.ts` is the config (columns, tooltips, default sort, filters, groupings). `compute.ts` builds rows from data. `run.ts` filters, sorts and pages. `schema.ts` validates requests. `view.ts` validates saved layouts.
 - **UI** (`src/dashboard/`, `src/screens/Home.tsx`): generated from the definitions. `controller.ts` owns saved views and autosave.
 - **Saved data**: `dashboard_views` (a user's named layouts, one active), `user_targets` (targets per restaurant).
@@ -48,6 +48,12 @@ To check isolation against the real database, paste `supabase/tests/dashboard_rl
 | `recipe_items` | `(restaurant_id, ingredient_id)` | usage per ingredient |
 | `labor_entries`, `inventory_counts` | unique `(restaurant_id, date…)` | lookups |
 | `dashboard_views` | unique `(user_id) where is_active`, unique `(user_id, name)` | one active view |
+
+## The AI advisor shares these numbers
+
+The advisor's tools (`supabase/functions/_shared/advisor/table-data.ts`) read the same real tables as the dashboard, as the signed-in user, and run the dashboard's own table code (`tables/`, which calls `metrics/`). They only choose a date range ("last 7/14/28 days" ending today), pick a table, and convert cents to dollars at the tool boundary. So food cost %, price changes, menu margins and usage variance cannot differ between the dashboard and the advisor. `tests/advisor/table-data.test.ts` checks this on the seed data.
+
+What changed for the advisor: food cost is now what was bought on invoices in the period (the dashboard definition), not counted usage, and price changes report the estimated monthly impact. The old in-memory sample data (`dataset-data.ts`, `mock-data.ts`) is kept for tests and offline evals only and is not wired into the Edge Function. Redeploy the `advisor` function to pick this up.
 
 ## Adding a table
 

@@ -152,7 +152,7 @@ export class DatasetRestaurantData implements RestaurantData {
         extra_cost_in_period: r2(extra),
       });
     }
-    changes.sort((a, b) => Math.abs(b.extra_cost_in_period) - Math.abs(a.extra_cost_in_period));
+    changes.sort((a, b) => Math.abs(b.extra_cost_in_period ?? 0) - Math.abs(a.extra_cost_in_period ?? 0));
     return changes.length
       ? { period, start, end, changes }
       : { period, start, end, changes: [], note: "No ingredient prices changed in this period." };

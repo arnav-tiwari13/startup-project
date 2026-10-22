@@ -40,9 +40,11 @@ export interface FoodCostResult {
   sales: number;
   food_cost_dollars: number;
   food_cost_pct: number;
-  basis: "actual_inventory_usage" | "theoretical_from_recipes";
-  theoretical_cost_dollars: number;
-  theoretical_pct: number;
+  /** Mock data: counted usage or recipes. Real data: what was bought on invoices in the period (same as the dashboard). */
+  basis: "actual_inventory_usage" | "theoretical_from_recipes" | "invoice_purchases";
+  /** Null when a sold item has no recipe or an ingredient has no price, so the figure cannot be computed. */
+  theoretical_cost_dollars: number | null;
+  theoretical_pct: number | null;
 }
 
 export interface PriceChange {
@@ -52,12 +54,20 @@ export interface PriceChange {
   old_price: number;
   new_price: number;
   change_pct: number;
-  extra_cost_in_period: number;
+  /** Mock data only: extra spend actually incurred in the period. */
+  extra_cost_in_period?: number;
+  /** Real data: (new - old price) x usage scaled to a 30-day month, as the dashboard computes it. */
+  monthly_impact_dollars?: number | null;
 }
 export interface PriceChangesResult { period: Period; start: string; end: string; changes: PriceChange[]; note?: string }
 
 export interface MarginRow { item: string; price: number; cost_per_plate: number; margin_dollars: number; margin_pct: number; food_cost_pct: number }
-export interface MenuMarginsResult { as_of: string; items: MarginRow[] }
+export interface MenuMarginsResult {
+  as_of: string;
+  items: MarginRow[];
+  /** Real data: items left out because a recipe or ingredient price is missing, and why. */
+  incomplete_items?: { item: string; reason: string }[];
+}
 
 export interface VarianceRow {
   ingredient: string; unit: string; theoretical_qty: number; actual_qty: number;
@@ -65,9 +75,12 @@ export interface VarianceRow {
 }
 export interface ActualVsTheoreticalResult {
   period: Period; start: string; end: string;
-  theoretical_cost_dollars: number; actual_cost_dollars: number; gap_dollars: number;
-  theoretical_pct: number; actual_pct: number; gap_pct_points: number;
+  theoretical_cost_dollars?: number; actual_cost_dollars?: number; gap_dollars: number;
+  theoretical_pct?: number; actual_pct?: number; gap_pct_points?: number;
   ingredients: VarianceRow[];
+  /** Real data: ingredients with no usable inventory counts, which are not in `ingredients`. */
+  ingredients_without_counts?: string[];
+  note?: string;
 }
 
 export interface SalesSummaryResult {
@@ -80,12 +93,14 @@ export interface SalesSummaryResult {
   daily_totals: { date: string; sales: number }[];
 }
 
-/** The interface the AI tools call. Swap the implementation to move from mock to real data. */
+export type MaybePromise<T> = T | Promise<T>;
+
+/** The interface the AI tools call. Real data is async (database); the in-memory sample data answers synchronously. */
 export interface RestaurantData {
   readonly restaurantId: string;
-  getFoodCost(period: Period): Result<FoodCostResult>;
-  getPriceChanges(period: Period): Result<PriceChangesResult>;
-  getMenuMargins(): Result<MenuMarginsResult>;
-  getActualVsTheoretical(period: Period): Result<ActualVsTheoreticalResult>;
-  getSalesSummary(period: Period): Result<SalesSummaryResult>;
+  getFoodCost(period: Period): MaybePromise<Result<FoodCostResult>>;
+  getPriceChanges(period: Period): MaybePromise<Result<PriceChangesResult>>;
+  getMenuMargins(): MaybePromise<Result<MenuMarginsResult>>;
+  getActualVsTheoretical(period: Period): MaybePromise<Result<ActualVsTheoreticalResult>>;
+  getSalesSummary(period: Period): MaybePromise<Result<SalesSummaryResult>>;
 }

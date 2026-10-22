@@ -186,3 +186,24 @@ export const variancePct = (variance: Metric, theoretical: Metric): Metric => {
   if (!isOk(theoretical)) return theoretical;
   return theoretical.value > 0 ? ok((variance.value / theoretical.value) * 100) : missing("no_theoretical_usage");
 };
+
+// ---- Theoretical food cost and sales averages ------------------------------------------------
+
+/**
+ * theoretical food cost = sum of (plate cost x units sold) over the menu. An item that sold but has no plate cost makes it
+ * missing, since the total would be understated. Items that sold nothing are skipped.
+ */
+export const theoreticalFoodCostCents = (items: { plateCost: Metric; unitsSold: number }[]): Metric => {
+  let total = 0;
+  for (const it of items) {
+    if (!Number.isFinite(it.unitsSold) || it.unitsSold < 0) return missing("invalid_input");
+    if (it.unitsSold === 0) continue;
+    if (!isOk(it.plateCost)) return it.plateCost;
+    total += it.plateCost.value * it.unitsSold;
+  }
+  return ok(Math.round(total));
+};
+
+/** average daily sales = total sales / days in the period */
+export const averageDailySalesCents = (totalCents: number, days: number): Metric =>
+  finite(totalCents, days) && days > 0 ? ok(Math.round(totalCents / days)) : missing("invalid_input");

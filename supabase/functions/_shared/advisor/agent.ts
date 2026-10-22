@@ -69,7 +69,7 @@ export async function runAdvisorTurn(opts: {
       const name = String(block.name);
       opts.onToolCall?.(name);
       const t0 = Date.now();
-      const outcome = executeTool(opts.data, name, block.input);
+      const outcome = await executeTool(opts.data, name, block.input);
       toolCalls.push({
         name, input: block.input, ok: outcome.ok,
         error: outcome.ok ? undefined : outcome.error, durationMs: Date.now() - t0,

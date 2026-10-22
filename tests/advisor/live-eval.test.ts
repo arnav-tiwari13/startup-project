@@ -3,7 +3,7 @@
 import { describe, expect, it } from "vitest";
 import { createAnthropicClient } from "../../supabase/functions/_shared/advisor/anthropic.ts";
 import { resolveModelSettings } from "../../supabase/functions/_shared/advisor/config.ts";
-import { createRestaurantData } from "../../supabase/functions/_shared/advisor/data-source.ts";
+import { createMockRestaurantData } from "../../supabase/functions/_shared/advisor/data-source.ts";
 import { handleChat } from "../../supabase/functions/_shared/advisor/handler.ts";
 import { MemoryAdvisorStore } from "../../supabase/functions/_shared/advisor/memory-store.ts";
 import { SAMPLE_RESTAURANT_ID, SAMPLE_RESTAURANT_ID_2 } from "../../supabase/functions/_shared/advisor/mock-data.ts";
@@ -22,7 +22,7 @@ describe.skipIf(!live)("live chat cases (real model)", () => {
     const userId = `eval-${c.id}`; // one user per case so the rate limiter never interferes
     store.memberships.set(userId, c.business === "cedar" ? SAMPLE_RESTAURANT_ID : SAMPLE_RESTAURANT_ID_2);
     const out = await collect((emit) =>
-      handleChat({ store, model, getData: createRestaurantData, systemPrompt: buildSystemPrompt("platecfo") }, { userId, message: c.message }, emit),
+      handleChat({ store, model, getData: createMockRestaurantData, systemPrompt: buildSystemPrompt("platecfo") }, { userId, message: c.message }, emit),
     );
     expect(out.error, `unexpected error: ${out.error?.code}`).toBeUndefined();
     const problems = grade(c, { text: out.text, tools: out.tools });

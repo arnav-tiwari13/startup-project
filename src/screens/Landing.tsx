@@ -71,9 +71,6 @@ function TopNav() {
           ))}
         </nav>
         <div className="ml-auto md:ml-0 flex items-center gap-2">
-          <a href={href("overview")} className="hidden sm:inline text-sm font-semibold px-3 py-2 hover:text-accent">
-            Live demo
-          </a>
           {authConfigured &&
             (session ? (
               <button type="button" onClick={() => signOut()} className="hidden sm:inline text-sm font-semibold px-3 py-2 hover:text-accent">
@@ -114,9 +111,6 @@ function TopNav() {
               {n.label}
             </a>
           ))}
-          <a href={href("overview")} className="py-2.5 font-medium">
-            Live demo
-          </a>
         </nav>
       )}
       {authOpen && !session && <AuthModal onClose={() => setAuthOpen(false)} />}

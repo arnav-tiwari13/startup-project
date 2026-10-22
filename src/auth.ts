@@ -8,6 +8,19 @@ export const signInWithGoogle = () =>
     options: { redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}#/overview` },
   });
 
+const homeUrl = () => `${window.location.origin}${import.meta.env.BASE_URL}`;
+
+export const signInWithEmail = (email: string, password: string) =>
+  supabase!.auth.signInWithPassword({ email, password });
+
+export const signUpWithEmail = (email: string, password: string) =>
+  supabase!.auth.signUp({ email, password, options: { emailRedirectTo: `${homeUrl()}#/overview` } });
+
+export const sendPasswordReset = (email: string) =>
+  supabase!.auth.resetPasswordForEmail(email, { redirectTo: homeUrl() });
+
+export const setNewPassword = (password: string) => supabase!.auth.updateUser({ password });
+
 export const signOut = () => supabase?.auth.signOut();
 
 export function useSession(): { session: Session | null; loading: boolean } {
@@ -25,4 +38,17 @@ export function useSession(): { session: Session | null; loading: boolean } {
   }, []);
 
   return { session, loading };
+}
+
+// True after the user lands from a password-reset email, until they set a new password.
+export function usePasswordRecovery(): [boolean, () => void] {
+  const [recovering, setRecovering] = useState(false);
+  useEffect(() => {
+    if (!supabase) return;
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") setRecovering(true);
+    });
+    return () => data.subscription.unsubscribe();
+  }, []);
+  return [recovering, () => setRecovering(false)];
 }

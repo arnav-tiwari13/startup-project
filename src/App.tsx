@@ -1,6 +1,7 @@
 import Layout from "./components/Layout";
 import SignInGate from "./components/SignInGate";
-import { useSession } from "./auth";
+import AuthModal from "./components/AuthModal";
+import { usePasswordRecovery, useSession } from "./auth";
 import config from "./data/config.json";
 import restaurant from "./data/restaurant.json";
 import { useRoute, type Route } from "./router";
@@ -24,7 +25,7 @@ const SCREENS: Record<Exclude<Route, "home" | "overview">, () => React.ReactElem
 
 const titleFor = (route: Exclude<Route, "home" | "overview">) => config.screens.find((s) => s.route === route)?.title ?? "";
 
-export default function App() {
+function AppRoutes() {
   const route = useRoute();
   const { session, loading } = useSession();
 
@@ -45,5 +46,15 @@ export default function App() {
     <Layout route={route} title={titleFor(route)} fullBleed={route === "advisor"}>
       <Screen />
     </Layout>
+  );
+}
+
+export default function App() {
+  const [recovering, doneRecovering] = usePasswordRecovery();
+  return (
+    <>
+      <AppRoutes />
+      {recovering && <AuthModal initialMode="newpassword" onClose={doneRecovering} />}
+    </>
   );
 }

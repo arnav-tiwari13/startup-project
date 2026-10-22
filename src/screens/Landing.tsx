@@ -74,7 +74,7 @@ function TopNav() {
           {authConfigured &&
             (session ? (
               <button type="button" onClick={() => signOut()} className="hidden sm:inline text-sm font-semibold px-3 py-2 hover:text-accent">
-                Sign out{session.user.email ? ` (${session.user.email})` : ""}
+                Sign out
               </button>
             ) : (
               <button type="button" onClick={() => setAuthOpen(true)} className="text-sm font-semibold px-3 py-2 hover:text-accent">

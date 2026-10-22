@@ -1,10 +1,11 @@
+import { useEffect } from "react";
 import Layout from "./components/Layout";
 import SignInGate from "./components/SignInGate";
 import AuthModal from "./components/AuthModal";
 import { usePasswordRecovery, useSession } from "./auth";
 import config from "./data/config.json";
 import restaurant from "./data/restaurant.json";
-import { useRoute, type Route } from "./router";
+import { href, useRoute, type Route } from "./router";
 import Advisor from "./screens/Advisor";
 import AuditResult from "./screens/AuditResult";
 import Home from "./screens/Home";
@@ -31,8 +32,15 @@ function AppRoutes() {
   const route = useRoute();
   const { session, loading } = useSession();
 
-  if (route === "home") return <Landing />;
+  const signedIn = Boolean(session);
+
+  // Signed-in users stay in the dashboard; the website is only for signed-out visitors.
+  useEffect(() => {
+    if (signedIn && route === "home") window.location.replace(href("overview"));
+  }, [signedIn, route]);
+
   if (loading) return null;
+  if (route === "home") return signedIn ? null : <Landing />;
   if (!session) return <SignInGate />;
 
   if (route === "overview") {

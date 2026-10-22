@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import config from "../data/config.json";
 import restaurant from "../data/restaurant.json";
 import { href, type Route } from "../router";
+import { signOut } from "../auth";
 import SubscribeButton from "./SubscribeButton";
 
 const NAV: { route: Route; title: string }[] = [
@@ -33,6 +34,18 @@ function Icon({ route }: { route: Route }) {
 }
 
 // Fade text that would otherwise be clipped mid-word while the sidebar is collapsed.
+function SignOutButton() {
+  const onClick = async () => {
+    await signOut();
+    window.location.hash = href("home");
+  };
+  return (
+    <button type="button" onClick={onClick} className="rounded-full border border-line bg-surface px-3.5 py-2 text-sm font-semibold text-muted transition hover:border-accent hover:text-accent">
+      Sign out
+    </button>
+  );
+}
+
 function SettingsLink({ active }: { active: boolean }) {
   return (
     <a
@@ -64,16 +77,13 @@ export default function Layout({ route, title, children, fullBleed = false }: { 
               className="group/side absolute left-0 top-0 h-full w-14 overflow-hidden border-r border-line bg-surface transition-[width,box-shadow] duration-300 ease-out hover:w-64 hover:shadow-2xl has-[:focus-visible]:w-64 has-[:focus-visible]:shadow-2xl motion-reduce:transition-none"
             >
               <div className="flex h-full w-64 flex-col px-3 py-6">
-                <a href={href("home")} className="flex items-center gap-3 text-xl font-bold leading-tight" aria-label={config.productName}>
+                <a href={href("overview")} className="flex items-center gap-3 text-xl font-bold leading-tight" aria-label={config.productName}>
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent text-bg">
                     {config.productName.charAt(0)}
                   </span>
                   <span className="whitespace-nowrap">{config.productName}</span>
                 </a>
-                <a href={href("home")} className={`mt-3 whitespace-nowrap text-xs font-medium text-accent ${revealOnOpen}`}>
-                  ← Back to website
-                </a>
-                <div className={`mb-6 mt-1 whitespace-nowrap text-sm text-muted ${revealOnOpen}`}>{restaurant.name}</div>
+                <div className={`mb-6 mt-3 whitespace-nowrap text-sm text-muted ${revealOnOpen}`}>{restaurant.name}</div>
                 <nav className="mt-3 space-y-1">
                   {NAV.map((n) => {
                     const active = n.route === route;
@@ -105,15 +115,17 @@ export default function Layout({ route, title, children, fullBleed = false }: { 
         </div>
 
         <div className={`flex-1 min-w-0 flex flex-col ${fullBleed ? "min-h-0" : ""}`}>
-          <div className="hidden lg:flex justify-end border-b border-line bg-surface px-6 py-2">
+          <div className="hidden lg:flex items-center justify-end gap-2 border-b border-line bg-surface px-6 py-2">
+            <SignOutButton />
             <SettingsLink active={route === "settings"} />
           </div>
           <header className="lg:hidden border-b border-line bg-surface">
             <div className="px-4 pt-3 flex items-center justify-between gap-3">
-              <a href={href("home")} className="font-bold text-lg leading-tight">
+              <a href={href("overview")} className="font-bold text-lg leading-tight">
                 {config.productName}
               </a>
               <span className="ml-auto text-sm text-muted">{restaurant.name}</span>
+              <SignOutButton />
               <SettingsLink active={route === "settings"} />
             </div>
             <SubscribeButton className="px-4 pt-2" />

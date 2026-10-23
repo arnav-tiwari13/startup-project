@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import config from "../data/config.json";
 import restaurant from "../data/restaurant.json";
 import { href, type Route } from "../router";
-import { signOut } from "../auth";
+import SignOutButton from "./SignOutButton";
 import SubscribeButton from "./SubscribeButton";
 
 const NAV: { route: Route; title: string }[] = [
@@ -34,18 +34,6 @@ function Icon({ route }: { route: Route }) {
 }
 
 // Fade text that would otherwise be clipped mid-word while the sidebar is collapsed.
-function SignOutButton() {
-  const onClick = async () => {
-    await signOut();
-    window.location.hash = href("home");
-  };
-  return (
-    <button type="button" onClick={onClick} className="rounded-full border border-line bg-surface px-3.5 py-2 text-sm font-semibold text-muted transition hover:border-accent hover:text-accent">
-      Sign out
-    </button>
-  );
-}
-
 function SettingsLink({ active }: { active: boolean }) {
   return (
     <a

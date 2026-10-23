@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import config from "../data/config.json";
-import restaurant from "../data/restaurant.json";
+import { useProfile } from "../profileStore";
 import { href, type Route } from "../router";
 import SignOutButton from "./SignOutButton";
 import SubscribeButton from "./SubscribeButton";
@@ -50,11 +50,11 @@ function SettingsLink({ active }: { active: boolean }) {
 const revealOnOpen = "opacity-0 transition-opacity duration-300 group-hover/side:opacity-100 group-has-[:focus-visible]/side:opacity-100 motion-reduce:transition-none";
 
 export default function Layout({ route, title, children, fullBleed = false }: { route: Route; title: string; children: ReactNode; fullBleed?: boolean }) {
+  const { profile } = useProfile();
+  const businessName = profile?.business_name ?? "";
+  const place = profile ? `${profile.city}, ${profile.state}` : "";
   return (
     <div className={`${fullBleed ? "h-dvh" : "min-h-screen"} flex flex-col`}>
-      <div className="border-b border-line bg-accent/10 text-accent text-center text-[11px] font-semibold tracking-widest uppercase py-1.5 px-4">
-        {config.demoLabel}
-      </div>
 
       <div className={`flex flex-1 ${fullBleed ? "min-h-0" : ""}`}>
         {/* Reserves a slim strip. The sidebar inside widens over the page on hover or keyboard focus, so content never shifts. */}
@@ -71,7 +71,7 @@ export default function Layout({ route, title, children, fullBleed = false }: { 
                   </span>
                   <span className="whitespace-nowrap">{config.productName}</span>
                 </a>
-                <div className={`mb-6 mt-3 whitespace-nowrap text-sm text-muted ${revealOnOpen}`}>{restaurant.name}</div>
+                <div className={`mb-6 mt-3 whitespace-nowrap text-sm text-muted ${revealOnOpen}`}>{businessName}</div>
                 <nav className="mt-3 space-y-1">
                   {NAV.map((n) => {
                     const active = n.route === route;
@@ -112,7 +112,7 @@ export default function Layout({ route, title, children, fullBleed = false }: { 
               <a href={href("overview")} className="font-bold text-lg leading-tight">
                 {config.productName}
               </a>
-              <span className="ml-auto text-sm text-muted">{restaurant.name}</span>
+              <span className="ml-auto text-sm text-muted">{businessName}</span>
               <SignOutButton />
               <SettingsLink active={route === "settings"} />
             </div>
@@ -133,16 +133,16 @@ export default function Layout({ route, title, children, fullBleed = false }: { 
               <main className="flex-1 w-full max-w-6xl px-4 sm:px-8 lg:px-10 py-10">
                 <div className="mb-8">
                   <h1 className="text-3xl sm:text-4xl font-bold">{title}</h1>
-                  <p className="mt-2 inline-flex flex-wrap items-center gap-x-2 rounded-full border border-line bg-surface px-3 py-1 text-xs font-medium text-muted">
-                    <span className="text-ink">{restaurant.name}</span> · {restaurant.location} · {restaurant.weekLabel}
-                  </p>
+                  {profile && (
+                    <p className="mt-2 inline-flex flex-wrap items-center gap-x-2 rounded-full border border-line bg-surface px-3 py-1 text-xs font-medium text-muted">
+                      <span className="text-ink">{businessName}</span> · {place}
+                    </p>
+                  )}
                 </div>
                 {children}
               </main>
 
-              <footer className="border-t border-line py-4 px-4 sm:px-8 lg:px-10 text-xs text-muted">
-                {config.demoLabel} · {restaurant.name} is a fictional restaurant
-              </footer>
+
             </>
           )}
         </div>

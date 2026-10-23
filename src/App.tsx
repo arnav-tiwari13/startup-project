@@ -4,7 +4,6 @@ import SignInGate from "./components/SignInGate";
 import AuthModal from "./components/AuthModal";
 import { usePasswordRecovery, useSession } from "./auth";
 import config from "./data/config.json";
-import restaurant from "./data/restaurant.json";
 import { ProfileContext, useProfileLoader } from "./profileStore";
 import Onboarding from "./screens/Onboarding";
 import { href, useRoute, type Route } from "./router";

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { ADVISOR_CONFIG } from "../../supabase/functions/_shared/advisor/config.ts";
 import { AdvisorRequestError, streamAdvisor } from "../advisor/client";
-import restaurant from "../data/restaurant.json";
+import { useProfile } from "../profileStore";
 import { parseBlocks, toolLabel, type Inline } from "../advisor/format";
 
 interface Msg {
@@ -57,6 +57,7 @@ function Answer({ text }: { text: string }) {
 }
 
 export default function Advisor() {
+  const { profile } = useProfile();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [conversationId, setConversationId] = useState<string | undefined>();
   const [input, setInput] = useState("");
@@ -137,7 +138,7 @@ export default function Advisor() {
         <div className="flex items-center gap-2 text-sm font-semibold">
           <span className="h-2 w-2 rounded-full bg-good" aria-hidden />
           AI advisor
-          <span className="font-normal text-muted">· {restaurant.name}</span>
+          <span className="font-normal text-muted">· {profile?.business_name ?? ""}</span>
         </div>
         <button type="button" onClick={newChat} disabled={messages.length === 0 && !busy} className="text-sm font-medium text-accent disabled:opacity-40">
           New chat

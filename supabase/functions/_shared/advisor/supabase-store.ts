@@ -22,7 +22,7 @@ export class SupabaseAdvisorStore implements AdvisorStore {
   async getConversation(conversationId: string, userId: string) {
     const { data, error } = await this.db
       .from("chat_conversations").select("id, restaurant_id")
-      .eq("id", conversationId).eq("user_id", userId).maybeSingle();
+      .eq("id", conversationId).eq("user_id", userId).is("deleted_at", null).maybeSingle();
     if (error) throw new Error(`store: ${error.message}`);
     if (!data) return null;
     const { count, error: countError } = await this.db

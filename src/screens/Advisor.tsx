@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { ADVISOR_CONFIG } from "../../supabase/functions/_shared/advisor/config.ts";
 import { AdvisorRequestError, streamAdvisor } from "../advisor/client";
-import { groupByRecency, listConversations, loadConversation, type ConversationSummary } from "../advisor/history";
+import ConversationRow from "../advisor/ConversationRow";
+import { deleteConversation, groupByRecency, listConversations, loadConversation, renameConversation, type ConversationSummary } from "../advisor/history";
 import { useProfile } from "../profileStore";
 import { parseBlocks, toolLabel, type Inline } from "../advisor/format";
 
@@ -125,6 +126,17 @@ export default function Advisor() {
     }
   }
 
+  async function rename(id: string, title: string) {
+    await renameConversation(id, title);
+    setHistory((list) => list?.map((c) => (c.id === id ? { ...c, title } : c)) ?? list);
+  }
+
+  async function remove(id: string) {
+    await deleteConversation(id);
+    setHistory((list) => list?.filter((c) => c.id !== id) ?? list);
+    if (id === conversationId) newChat();
+  }
+
   async function openConversation(id: string) {
     if (id === conversationId) {
       setHistoryOpen(false);
@@ -195,22 +207,17 @@ export default function Advisor() {
             <div key={g.label} className="mt-3 first:mt-0">
               <h3 className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted">{g.label}</h3>
               <ul className="space-y-0.5">
-                {g.items.map((c) => {
-                  const active = c.id === conversationId;
-                  return (
-                    <li key={c.id}>
-                      <button
-                        type="button"
-                        onClick={() => void openConversation(c.id)}
-                        aria-current={active ? "true" : undefined}
-                        title={c.title}
-                        className={`block w-full truncate rounded-lg px-2.5 py-2 text-left text-sm transition ${active ? "bg-accent/10 font-semibold text-accent" : "hover:bg-bg"}`}
-                      >
-                        {c.title}
-                      </button>
-                    </li>
-                  );
-                })}
+                {g.items.map((c) => (
+                  <li key={c.id}>
+                    <ConversationRow
+                      c={c}
+                      active={c.id === conversationId}
+                      onOpen={() => void openConversation(c.id)}
+                      onRename={(title) => rename(c.id, title)}
+                      onDelete={() => remove(c.id)}
+                    />
+                  </li>
+                ))}
               </ul>
             </div>
           ))}

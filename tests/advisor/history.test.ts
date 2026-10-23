@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { groupByRecency, titleFrom } from "../../src/advisor/history";
+import { cleanTitle, groupByRecency, titleFrom } from "../../src/advisor/history";
 
 describe("titleFrom", () => {
   it("uses the first question on one line", () => {
@@ -34,5 +34,16 @@ describe("groupByRecency", () => {
 
   it("returns no groups for no conversations", () => {
     expect(groupByRecency([], now)).toEqual([]);
+  });
+});
+
+describe("cleanTitle", () => {
+  it("trims and collapses whitespace", () => {
+    expect(cleanTitle("  Brisket \n costs  ")).toBe("Brisket costs");
+  });
+  it("rejects empty and over-long titles", () => {
+    expect(cleanTitle("   ")).toBeNull();
+    expect(cleanTitle("x".repeat(101))).toBeNull();
+    expect(cleanTitle("x".repeat(100))).toBe("x".repeat(100));
   });
 });

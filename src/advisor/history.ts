@@ -12,6 +12,13 @@ export interface SavedMessage {
 }
 
 const TITLE_CHARS = 60;
+export const MAX_TITLE_CHARS = 100;
+
+/** A typed title, trimmed to one line; null when it is empty or too long to save. */
+export function cleanTitle(raw: string): string | null {
+  const t = raw.replace(/\s+/g, " ").trim();
+  return t.length >= 1 && t.length <= MAX_TITLE_CHARS ? t : null;
+}
 
 /** A conversation is titled by its first question, trimmed to one short line. */
 export function titleFrom(firstQuestion: string | undefined): string {
@@ -40,9 +47,19 @@ export function groupByRecency(items: ConversationSummary[], now = new Date()): 
 // Row-level security limits both queries to the signed-in user's own conversations and messages.
 export async function listConversations(limit = 50): Promise<ConversationSummary[]> {
   if (!supabase) return [];
-  const { data: convos, error } = await supabase
-    .from("chat_conversations").select("id, created_at").order("created_at", { ascending: false }).limit(limit);
-  if (error) throw new Error(error.message);
+  type Row = { id: string; created_at: string; title?: string | null };
+  let convos: Row[] | null;
+  const res = await supabase
+    .from("chat_conversations").select("id, created_at, title").is("deleted_at", null)
+    .order("created_at", { ascending: false }).limit(limit);
+  if (res.error) {
+    // Before the rename/delete migration is applied those columns don't exist; list without them.
+    const old = await supabase.from("chat_conversations").select("id, created_at").order("created_at", { ascending: false }).limit(limit);
+    if (old.error) throw new Error(old.error.message);
+    convos = old.data as Row[];
+  } else {
+    convos = res.data as Row[];
+  }
   if (!convos || convos.length === 0) return [];
 
   const { data: firsts, error: msgError } = await supabase
@@ -56,7 +73,7 @@ export async function listConversations(limit = 50): Promise<ConversationSummary
   // A conversation with no saved question (the first send failed) isn't worth listing.
   return convos
     .filter((c) => firstQuestion.has(c.id as string))
-    .map((c) => ({ id: c.id as string, createdAt: c.created_at as string, title: titleFrom(firstQuestion.get(c.id as string)) }));
+    .map((c) => ({ id: c.id as string, createdAt: c.created_at as string, title: c.title?.trim() || titleFrom(firstQuestion.get(c.id as string)) }));
 }
 
 export async function loadConversation(id: string): Promise<SavedMessage[]> {
@@ -64,4 +81,18 @@ export async function loadConversation(id: string): Promise<SavedMessage[]> {
   const { data, error } = await supabase.from("chat_messages").select("role, content").eq("conversation_id", id).order("id");
   if (error) throw new Error(error.message);
   return (data ?? []) as SavedMessage[];
+}
+
+export async function renameConversation(id: string, title: string): Promise<void> {
+  const clean = cleanTitle(title);
+  if (!supabase || !clean) throw new Error("Enter a name up to 100 characters.");
+  const { error } = await supabase.from("chat_conversations").update({ title: clean }).eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
+/** Hides the conversation from its owner. The messages stay stored (see the chat_rename_delete migration). */
+export async function deleteConversation(id: string): Promise<void> {
+  if (!supabase) throw new Error("Sign-in isn't configured.");
+  const { error } = await supabase.from("chat_conversations").update({ deleted_at: new Date().toISOString() }).eq("id", id);
+  if (error) throw new Error(error.message);
 }

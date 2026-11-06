@@ -4,7 +4,7 @@ import {
   actualUsageQty, addDays, categorySpendPct, classifyMenuItem, estimatedProfitCents, foodCostPct, laborPct, marginCents,
   marginPct, missing, monthlyPriceImpactCents, monthlyUsageQty, ok, pctChange, plateCostCents, pointChange, popularityThreshold,
   primeCostPct, priceChangePct, profitContributionCents, rateAgainstTarget, theoreticalUsageQty, varianceCents, variancePct,
-  varianceQty, vsTarget, isOk, type Comparison, type DateRange, type Metric,
+  varianceQty, vsTarget, isOk, daysInRange, type Comparison, type DateRange, type Metric,
 } from "../metrics/index.ts";
 import type { Bundle } from "./data.ts";
 import type { Filters } from "./schema.ts";
@@ -428,5 +428,46 @@ export function usageVariance(c: Ctx): TableResult {
     rows,
     notes,
     lastUpdated: maxDate(c.b.counts.map((k) => k.count_date), c.b.sales.map((s) => s.sale_date)),
+  };
+}
+
+// ---- 6. Daily sales (chart) ------------------------------------------------------------------
+
+export function dailySales(c: Ctx): TableResult {
+  const scope = new Set(c.ids);
+  const byDay = (r: DateRange) => {
+    const m = new Map<string, { cents: number; units: number }>();
+    for (const s of c.b.sales) {
+      if (!scope.has(s.restaurant_id) || !inR(s.sale_date, r)) continue;
+      const cur = m.get(s.sale_date) ?? { cents: 0, units: 0 };
+      cur.cents += s.sales_cents;
+      cur.units += s.units;
+      m.set(s.sale_date, cur);
+    }
+    return m;
+  };
+  const cur = byDay(c.q.range);
+  const prev = c.q.prev ? byDay(c.q.prev) : null;
+  const n = daysInRange(c.q.range);
+  const rows: Row[] = [];
+  if (cur.size > 0) {
+    for (let i = 0; i < n; i++) {
+      const date = addDays(c.q.range.start, i);
+      const day = cur.get(date) ?? { cents: 0, units: 0 };
+      const before = prev && c.q.prev ? ok(prev.get(addDays(c.q.prev.start, i))?.cents ?? 0) : null;
+      rows.push({
+        key: date,
+        cells: {
+          date: text(date),
+          sales: mk(ok(day.cents), { compare: cmp(compareAmount(c, ok(day.cents), before), "pct") }),
+          units: mk(ok(day.units)),
+        },
+      });
+    }
+  }
+  return {
+    rows,
+    notes: rows.length ? ["Days with no sales show as zero."] : ["No sales in this period."],
+    lastUpdated: maxDate(c.b.sales.filter((s) => scope.has(s.restaurant_id)).map((s) => s.sale_date)),
   };
 }

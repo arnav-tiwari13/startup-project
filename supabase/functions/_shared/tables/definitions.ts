@@ -125,6 +125,22 @@ export const TABLE_DEFS: Record<TableId, TableDef> = {
       { id: "items", label: "Items", tooltip: "How many ingredients are in this group.", kind: "count", defaultVisible: false, sortable: true },
     ],
   },
+
+  daily_sales: {
+    id: "daily_sales",
+    title: "Daily sales",
+    description: "Sales for each day of the period, so you can spot slow and strong days.",
+    display: "chart",
+    defaultSort: { column: "date", dir: "asc" },
+    groupings: [],
+    defaultGroupBy: null,
+    filters: [{ id: "location", label: "Location", kind: "select" }],
+    columns: [
+      { id: "date", label: "Date", tooltip: "The calendar day this point covers.", kind: "text", defaultVisible: true, sortable: true },
+      { id: "sales", label: "Sales", tooltip: "Everything you sold that day, from your sales data.", kind: "cents", defaultVisible: true, sortable: true },
+      { id: "units", label: "Units sold", tooltip: "How many items you sold that day.", kind: "count", defaultVisible: true, sortable: true },
+    ],
+  },
 };
 
 export const tableDef = (id: TableId): TableDef => TABLE_DEFS[id];

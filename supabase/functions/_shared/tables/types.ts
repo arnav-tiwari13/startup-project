@@ -12,6 +12,7 @@ export const TABLE_IDS = [
   "ingredient_price_changes",
   "menu_margins",
   "usage_variance",
+  "daily_sales",
 ] as const;
 export type TableId = (typeof TABLE_IDS)[number];
 
@@ -43,6 +44,8 @@ export interface TableDef {
   /** Label for the "no grouping" choice, when the table can be shown ungrouped. Absent means it is always grouped. */
   ungroupedLabel?: string;
   filters: FilterDef[];
+  /** How the dashboard draws it. Absent means a table. A chart still returns rows; each row is one data point. */
+  display?: "table" | "chart";
 }
 
 /** One value in a table. A cell is never a guess: when data is missing, `value` is null and `missing` says why. */

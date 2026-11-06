@@ -1,5 +1,5 @@
 // Supabase Edge Function (Deno): POST /functions/v1/advisor
-// Body: { message: string, conversationId?: string }. Response: server-sent events (see AdvisorEvent).
+// Body: { message: string, conversationId?: string, context?: ClickRef }. A click reference holds ids, dates and filters only; the server rebuilds the numbers. Response: server-sent events (see AdvisorEvent).
 //
 // Secrets (set with `supabase secrets set`, never in code): ANTHROPIC_API_KEY.
 // Optional: ANTHROPIC_MODEL, ANTHROPIC_EFFORT, ANTHROPIC_FALLBACKS=off.
@@ -11,6 +11,8 @@ import { describeError } from "../_shared/advisor/errors.ts";
 import { createRestaurantData } from "../_shared/advisor/data-source.ts";
 import { handleChat, type AdvisorEvent } from "../_shared/advisor/handler.ts";
 import { SupabaseAdvisorStore } from "../_shared/advisor/supabase-store.ts";
+import { liveBundleLoader } from "../_shared/advisor/table-data.ts";
+import { buildWidgetContext } from "../_shared/widgets/context.ts";
 import { buildSystemPrompt } from "../_shared/advisor/system-prompt.ts";
 
 const PRODUCT_NAME = "platecfo";
@@ -44,7 +46,7 @@ Deno.serve(async (req) => {
   // 2. Read a small JSON body.
   const raw = await req.text();
   if (raw.length > MAX_BODY_BYTES) return json(413, { error: "too_large" });
-  let body: { message?: unknown; conversationId?: unknown };
+  let body: { message?: unknown; conversationId?: unknown; context?: unknown };
   try {
     body = JSON.parse(raw);
   } catch {
@@ -67,6 +69,8 @@ Deno.serve(async (req) => {
     model: createAnthropicClient({ apiKey, ...settings }),
     getData: createRestaurantData(supabase, userId),
     systemPrompt: buildSystemPrompt(PRODUCT_NAME),
+    buildContext: (raw: unknown, restaurantId: string) =>
+      buildWidgetContext(raw, { restaurantId, load: liveBundleLoader(supabase, userId), today: new Date().toISOString().slice(0, 10) }),
   };
 
   // 3. Stream the answer as server-sent events.
@@ -75,7 +79,7 @@ Deno.serve(async (req) => {
     async start(controller) {
       const send = (e: AdvisorEvent) => controller.enqueue(encoder.encode(`data: ${JSON.stringify(e)}\n\n`));
       try {
-        await handleChat(deps, { userId, message: body.message, conversationId: body.conversationId }, send);
+        await handleChat(deps, { userId, message: body.message, conversationId: body.conversationId, context: body.context }, send);
       } catch (err) {
         console.error("advisor failure:", describeError(err));
         send({ type: "error", code: "model_error", message: "Something went wrong. Please try again." });

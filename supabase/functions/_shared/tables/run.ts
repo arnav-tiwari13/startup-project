@@ -1,7 +1,7 @@
 // Plans which data a table request needs, then turns loaded data into the response (filter, group, sort, page).
 import { addDays, comparisonRange, resolvePeriod, type DateRange } from "../metrics/index.ts";
 import {
-  foodCostByCategory, ingredientPriceChanges, makeCtx, menuMargins, profitSnapshot, usageVariance, type Ctx, type Query, type TableResult,
+  dailySales, foodCostByCategory, ingredientPriceChanges, makeCtx, menuMargins, profitSnapshot, usageVariance, type Ctx, type Query, type TableResult,
 } from "./compute.ts";
 import type { Bundle, Needs } from "./data.ts";
 import { TABLE_DEFS } from "./definitions.ts";
@@ -23,6 +23,7 @@ const REGISTRY: Record<TableId, { compute: (c: Ctx) => TableResult; needs: (q: Q
       return { sales: s, invoices: { start: addDays(min(q.range.end, q.prev?.end ?? q.range.end), -90), end: s.end }, recipes: true };
     },
   },
+  daily_sales: { compute: dailySales, needs: (q) => ({ sales: span(q) }) },
   usage_variance: {
     compute: usageVariance,
     needs: (q) => {

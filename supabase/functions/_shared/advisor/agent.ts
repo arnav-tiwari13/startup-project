@@ -1,3 +1,4 @@
+import { answerSchema, renderAnswerText, SUBMIT_ANSWER, type Answer } from "./answer.ts";
 import { executeTool, type ToolDefinition } from "./tools.ts";
 import type { RestaurantData } from "./types.ts";
 
@@ -14,7 +15,7 @@ export interface ModelClient {
 }
 
 export interface ToolCallRecord { name: string; input: unknown; ok: boolean; error?: string; durationMs: number }
-export interface TurnResult { text: string; toolCalls: ToolCallRecord[]; stopReason: string }
+export interface TurnResult { text: string; toolCalls: ToolCallRecord[]; stopReason: string; answer?: Answer }
 
 export const REFUSAL_TEXT = "I can't help with that request. I can help with your food costs, pricing, inventory, vendors and sales.";
 const TOO_MANY_TOOLS = "I couldn't finish that analysis in one go. Try a narrower question, such as one period or one item.";
@@ -29,6 +30,8 @@ export async function runAdvisorTurn(opts: {
   maxIterations: number;
   onText: (delta: string) => void;
   onToolCall?: (name: string) => void;
+  /** When set, only these data tools run, and the model may finish by calling submit_answer. */
+  structured?: { allowedTools: readonly string[]; onAnswer: (a: Answer) => void };
 }): Promise<TurnResult> {
   const convo: ApiMessage[] = [...opts.history];
   const toolCalls: ToolCallRecord[] = [];
@@ -69,7 +72,19 @@ export async function runAdvisorTurn(opts: {
       const name = String(block.name);
       opts.onToolCall?.(name);
       const t0 = Date.now();
-      const outcome = await executeTool(opts.data, name, block.input);
+      if (opts.structured && name === SUBMIT_ANSWER) {
+        const parsed = answerSchema.safeParse(block.input);
+        if (parsed.success) {
+          toolCalls.push({ name, input: undefined, ok: true, durationMs: Date.now() - t0 });
+          opts.structured.onAnswer(parsed.data);
+          return { text: renderAnswerText(parsed.data), toolCalls, stopReason: "answered", answer: parsed.data };
+        }
+        const error = `Invalid answer: ${parsed.error.issues.slice(0, 3).map((x) => `${x.path.join(".") || "answer"} ${x.message}`).join("; ")}. Call submit_answer again with a valid answer.`;
+        toolCalls.push({ name, input: undefined, ok: false, error, durationMs: Date.now() - t0 });
+        results.push({ type: "tool_result", tool_use_id: block.id, content: JSON.stringify({ error }), is_error: true });
+        continue;
+      }
+      const outcome = await executeTool(opts.data, name, block.input, opts.structured?.allowedTools);
       toolCalls.push({
         name, input: block.input, ok: outcome.ok,
         error: outcome.ok ? undefined : outcome.error, durationMs: Date.now() - t0,

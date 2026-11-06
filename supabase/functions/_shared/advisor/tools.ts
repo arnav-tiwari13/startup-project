@@ -47,9 +47,9 @@ export type ToolOutcome = { ok: true; result: unknown } | { ok: false; error: st
 const isPeriod = (v: unknown): v is (typeof PERIODS)[number] => typeof v === "string" && (PERIODS as readonly string[]).includes(v);
 
 /** Validates the model's input strictly, then runs the tool against the already-scoped data source. */
-export async function executeTool(data: RestaurantData, name: string, input: unknown): Promise<ToolOutcome> {
+export async function executeTool(data: RestaurantData, name: string, input: unknown, allowedTools?: readonly string[]): Promise<ToolOutcome> {
   const def = TOOL_DEFINITIONS.find((t) => t.name === name);
-  if (!def) return { ok: false, error: `Unknown tool: ${name}` };
+  if (!def || (allowedTools && !allowedTools.includes(name))) return { ok: false, error: `Unknown tool: ${name}` };
   if (typeof input !== "object" || input === null || Array.isArray(input)) return { ok: false, error: "Tool input must be an object." };
 
   const allowed = Object.keys(def.input_schema.properties);

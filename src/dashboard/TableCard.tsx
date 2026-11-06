@@ -5,6 +5,8 @@ import { CATEGORY_LABELS, type Category, type FilterDef } from "../../supabase/f
 import { moveColumn, setColumnVisible, type TableView, type ViewConfig } from "../../supabase/functions/_shared/tables/view.ts";
 import { fetchTable, type TableRequestInput } from "./api";
 import { downloadCsv, toCsv } from "./csv";
+import { useAi } from "../ai/AiContext";
+import { buildAsked, buildRef, type Target } from "../ai/ref";
 import DataTable from "./DataTable";
 import { FLAG_LABELS, formatPeriod } from "./format";
 import { useDebounced, useTable } from "./hooks";
@@ -15,7 +17,7 @@ const fieldClass = "rounded-lg border border-line bg-bg px-2.5 py-1.5 text-sm te
 const buttonClass = "rounded-lg border border-line bg-surface px-3 py-1.5 text-sm font-medium text-ink hover:border-accent hover:text-accent disabled:opacity-50";
 
 /** Drops empty filter values so they are not sent. */
-const cleanFilters = (f: Filters): Filters => Object.fromEntries(Object.entries(f).filter(([, v]) => v !== undefined && v !== "" && v !== false)) as Filters;
+export const cleanFilters = (f: Filters): Filters => Object.fromEntries(Object.entries(f).filter(([, v]) => v !== undefined && v !== "" && v !== false)) as Filters;
 
 function comparisonText(kind: ViewConfig["comparison"], range: { start: string; end: string } | null) {
   if (kind === "target") return "vs your targets";
@@ -53,6 +55,21 @@ export default function TableCard({ view, config, refreshKey, onChange }: {
     [view.id, view.sort, view.filters, view.groupBy, config.period, config.comparison, limit],
   );
   const { data, loading, error, reload } = useTable(request, refreshKey);
+
+  // AI mode: clicking the widget, a row or a cell sends a reference (ids and settings only) to the advisor panel.
+  const ai = useAi();
+  const periodText = data ? formatPeriod(data.period) : "";
+  const askAbout = (target: Target, labels: { item?: string; column?: string } = {}) =>
+    ai.ask(buildAsked(buildRef(view.id, target, request), { ...labels, periodText }));
+  const rowName = (row: { key: string; cells: Record<string, { value: number | string | null }> }) => {
+    const first = def.columns.find((c) => c.kind === "text" && typeof row.cells[c.id]?.value === "string" && row.cells[c.id].value !== "");
+    return first ? String(row.cells[first.id].value) : row.key;
+  };
+  const onCardClick = (e: React.MouseEvent) => {
+    if (!ai.enabled || !data) return;
+    if ((e.target as HTMLElement).closest("button, a, select, input, summary, label, td, th, details, [role=button]")) return;
+    askAbout({ kind: "widget" });
+  };
 
   // With more than one location, rows are meaningless without knowing which location they belong to.
   const multiLocation = (data?.filterOptions.location.length ?? 0) > 1;
@@ -97,7 +114,10 @@ export default function TableCard({ view, config, refreshKey, onChange }: {
   const hasFilters = Object.keys(cleanFilters(view.filters)).length > 0;
 
   return (
-    <section aria-labelledby={`t-${view.id}`} className="rounded-2xl border border-line bg-surface shadow-card">
+    <section
+      aria-labelledby={`t-${view.id}`} onClick={onCardClick}
+      className={`rounded-2xl border bg-surface shadow-card ${ai.enabled ? "cursor-pointer border-accent/40 hover:border-accent hover:ring-2 hover:ring-accent/30" : "border-line"}`}
+    >
       <header className="flex flex-wrap items-start justify-between gap-3 px-5 pt-5">
         <div className="min-w-0">
           <h2 id={`t-${view.id}`} className="text-lg font-bold">{def.title}</h2>
@@ -128,6 +148,9 @@ export default function TableCard({ view, config, refreshKey, onChange }: {
               </ul>
             </div>
           </details>
+          {ai.enabled && (
+            <button type="button" onClick={() => askAbout({ kind: "widget" })} disabled={!data} className="rounded-lg border border-accent bg-accent px-3 py-1.5 text-sm font-semibold text-bg disabled:opacity-50" aria-label={`Ask AI about ${def.title}`}>✦ Ask AI</button>
+          )}
           <button type="button" onClick={exportCsv} disabled={!data || isEmpty || exporting === "Preparing…"} className={buttonClass}>Export CSV</button>
           <button type="button" onClick={() => onChange((c) => ({ ...c, tables: c.tables.map((t) => (t.id === view.id ? { ...t, visible: false } : t)) }))} className={buttonClass} aria-label={`Hide ${def.title}`}>Hide</button>
         </div>
@@ -179,7 +202,10 @@ export default function TableCard({ view, config, refreshKey, onChange }: {
             {[0, 1, 2, 3].map((i) => <div key={i} className="h-9 animate-pulse rounded-lg bg-line/60" />)}
           </div>
         )}
-        {data && !isEmpty && columns.length > 0 && <DataTable columns={columns} rows={data.rows} sort={sort} onSort={onSort} busy={loading} />}
+        {data && !isEmpty && columns.length > 0 && <DataTable
+          columns={columns} rows={data.rows} sort={sort} onSort={onSort} busy={loading}
+          ask={ai.enabled ? { onRow: (row) => askAbout({ kind: "row", row_key: row.key }, { item: rowName(row) }), onCell: (row, col) => askAbout({ kind: "cell", row_key: row.key, column: col.id }, { item: rowName(row), column: col.label }) } : undefined}
+        />}
         {isEmpty && (
           <p className="px-5 pb-6 pt-2 text-sm text-muted">
             {hasFilters ? "Nothing matches these filters." : "No data for this period yet. Try a different period, or check that invoices, sales and recipes are loaded."}

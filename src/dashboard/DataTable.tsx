@@ -54,7 +54,20 @@ function CellView({ column, cell }: { column: ColumnDef; cell: Cell }) {
   );
 }
 
-export default function DataTable({ columns, rows, sort, onSort, busy }: {
+/** In AI mode, rows and cells can be clicked to ask about them. Only references (row key, column id) leave the table. */
+export interface AskHandlers { onRow: (row: Row) => void; onCell: (row: Row, column: ColumnDef) => void }
+
+function activate(fn: () => void) {
+  return {
+    onClick: (e: { stopPropagation: () => void }) => { e.stopPropagation(); fn(); },
+    onKeyDown: (e: { key: string; preventDefault: () => void; stopPropagation: () => void }) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); fn(); }
+    },
+  };
+}
+
+export default function DataTable({ columns, rows, sort, onSort, busy, ask }: {
+  ask?: AskHandlers;
   columns: ColumnDef[];
   rows: Row[];
   sort: { column: string; dir: "asc" | "desc" };
@@ -91,16 +104,28 @@ export default function DataTable({ columns, rows, sort, onSort, busy }: {
                 </th>
               );
             })}
+            {ask && <th scope="col" className="border-b border-line bg-surface px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted"><span className="sr-only">Ask AI</span></th>}
           </tr>
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={row.key} className="group/row hover:bg-bg/60">
+            <tr key={row.key} className={`group/row hover:bg-bg/60 ${ask ? "hover:bg-accent/5" : ""}`}>
               {columns.map((c, i) => (
-                <td key={c.id} className={`border-b border-line px-4 py-2.5 align-top ${i === 0 ? "sticky left-0 z-[1] bg-surface font-medium group-hover/row:bg-bg" : ""}`}>
+                <td
+                  key={c.id}
+                  {...(ask ? { ...activate(() => ask.onCell(row, c)), role: "button", tabIndex: 0, "aria-label": `Ask AI about ${c.label}`, title: "Ask AI about this value" } : {})}
+                  className={`border-b border-line px-4 py-2.5 align-top ${i === 0 ? "sticky left-0 z-[1] bg-surface font-medium group-hover/row:bg-bg" : ""} ${ask ? "cursor-pointer outline-offset-[-2px] hover:bg-accent/10 hover:outline hover:outline-2 hover:outline-accent/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent" : ""}`}
+                >
                   <CellView column={c} cell={row.cells[c.id] ?? { value: null }} />
                 </td>
               ))}
+              {ask && (
+                <td className="border-b border-line px-3 py-2.5 align-top">
+                  <button type="button" onClick={(e) => { e.stopPropagation(); ask.onRow(row); }} aria-label={`Ask AI about this row`} className="whitespace-nowrap rounded-lg border border-accent/50 px-2.5 py-1 text-xs font-semibold text-accent hover:bg-accent hover:text-bg">
+                    ✦ Ask AI
+                  </button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

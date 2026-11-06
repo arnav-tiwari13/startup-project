@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import { TABLE_DEFS } from "../../supabase/functions/_shared/tables/definitions.ts";
 import { setTableVisible } from "../../supabase/functions/_shared/tables/view.ts";
 import { listRestaurants } from "../dashboard/api";
+import ActionList from "../ai/ActionList";
+import { AiProvider } from "../ai/AiContext";
+import AskPanel from "../ai/AskPanel";
+import ChartCard from "../dashboard/ChartCard";
 import CustomizePanel from "../dashboard/CustomizePanel";
 import { useDashboard } from "../dashboard/hooks";
 import TableCard from "../dashboard/TableCard";
@@ -11,8 +15,17 @@ import TargetsPanel from "../dashboard/TargetsPanel";
 import Toolbar from "../dashboard/Toolbar";
 
 export default function Home() {
+  return (
+    <AiProvider>
+      <HomeContent />
+      <AskPanel />
+    </AiProvider>
+  );
+}
+
+function HomeContent() {
   const { controller, state } = useDashboard();
-  const [panel, setPanel] = useState<null | "customize" | "targets">(null);
+  const [panel, setPanel] = useState<null | "customize" | "targets" | "actions">(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [restaurants, setRestaurants] = useState<{ id: string; name: string }[] | null>(null);
 
@@ -46,7 +59,7 @@ export default function Home() {
 
   return (
     <div className="space-y-6">
-      <Toolbar state={state} controller={controller} onCustomize={() => setPanel("customize")} onTargets={() => setPanel("targets")} />
+      <Toolbar state={state} controller={controller} onCustomize={() => setPanel("customize")} onTargets={() => setPanel("targets")} onActions={() => setPanel("actions")} />
 
       {hidden.length > 0 && (
         <p className="flex flex-wrap items-center gap-2 text-sm text-muted">
@@ -69,10 +82,13 @@ export default function Home() {
         </section>
       )}
 
-      {visible.map((t) => (
-        <TableCard key={t.id} view={t} config={config} refreshKey={refreshKey} onChange={(fn) => controller.update(fn)} />
-      ))}
+      {visible.map((t) =>
+        TABLE_DEFS[t.id].display === "chart"
+          ? <ChartCard key={t.id} view={t} config={config} refreshKey={refreshKey} onChange={(fn) => controller.update(fn)} />
+          : <TableCard key={t.id} view={t} config={config} refreshKey={refreshKey} onChange={(fn) => controller.update(fn)} />,
+      )}
 
+      {panel === "actions" && <ActionList onClose={() => setPanel(null)} />}
       {panel === "customize" && <CustomizePanel config={config} onChange={(fn) => controller.update(fn)} onClose={() => setPanel(null)} />}
       {panel === "targets" && <TargetsPanel restaurants={restaurants ?? []} onSaved={() => setRefreshKey((k) => k + 1)} onClose={() => setPanel(null)} />}
     </div>

@@ -234,3 +234,13 @@ describe("chat with a clicked widget", () => {
     }
   });
 });
+
+describe("rate limiting applies to clicks too", () => {
+  it("a click message counts against the per-user limit and is refused with no model call once exceeded", async () => {
+    const d = deps([]);
+    for (let i = 0; i < 6; i++) d.store.messages.push({ conversationId: "c", userId: "user-a", restaurantId: A, role: "user", content: "x", at: Date.now() } as never);
+    const events = await chat(d, { ...ref("menu_margins") });
+    expect(events.find((e) => e.type === "error")).toMatchObject({ code: "rate_limited" });
+    expect(d.calls).toHaveLength(0);
+  });
+});

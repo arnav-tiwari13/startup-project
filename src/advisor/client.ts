@@ -1,3 +1,4 @@
+import type { ClickRefInput } from "../../supabase/functions/_shared/widgets/click.ts";
 import type { AdvisorEvent } from "../../supabase/functions/_shared/advisor/handler.ts";
 import { supabase, supabaseAnonKey, supabaseUrl } from "../supabase";
 import { createSseParser } from "./sse";
@@ -14,6 +15,8 @@ export class AdvisorRequestError extends Error {
 export async function streamAdvisor(opts: {
   message: string;
   conversationId?: string;
+  /** A click reference (ids, dates, filters). Never data values: the server rebuilds the numbers itself. */
+  context?: ClickRefInput;
   signal?: AbortSignal;
   onEvent: (e: AdvisorEvent) => void;
 }): Promise<void> {
@@ -29,7 +32,7 @@ export async function streamAdvisor(opts: {
     res = await fetch(`${supabaseUrl}/functions/v1/advisor`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}`, apikey: supabaseAnonKey, "Content-Type": "application/json" },
-      body: JSON.stringify({ message: opts.message, conversationId: opts.conversationId }),
+      body: JSON.stringify({ message: opts.message, conversationId: opts.conversationId, context: opts.context }),
       signal: opts.signal,
     });
   } catch (err) {

@@ -55,6 +55,8 @@ The advisor's tools (`supabase/functions/_shared/advisor/table-data.ts`) read th
 
 What changed for the advisor: food cost is now what was bought on invoices in the period (the dashboard definition), not counted usage, and price changes report the estimated monthly impact. The old in-memory sample data (`dataset-data.ts`, `mock-data.ts`) is kept for tests and offline evals only and is not wired into the Edge Function. Redeploy the `advisor` function to pick this up.
 
+See also [AI mode](ai-mode.md), which lets owners click any table, row, cell or chart bar to ask the advisor about it.
+
 ## Adding a table
 
 1. **Definition**: add an entry to `TABLE_DEFS` in `_shared/tables/definitions.ts` and its id to `TABLE_IDS` in `types.ts`.

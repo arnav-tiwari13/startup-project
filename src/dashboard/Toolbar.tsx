@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { MAX_RANGE_DAYS, daysInRange, isIsoDate, type PeriodPreset } from "../../supabase/functions/_shared/metrics/index.ts";
 import type { ViewConfig } from "../../supabase/functions/_shared/tables/view.ts";
 import type { DashboardState, ViewsController } from "./controller";
+import AiToggle from "../ai/AiToggle";
 import Modal from "./Modal";
 
 const PERIODS: { value: PeriodPreset; label: string }[] = [
@@ -45,11 +46,12 @@ function NameForm({ title, initial, action, onDone }: { title: string; initial: 
   );
 }
 
-export default function Toolbar({ state, controller, onCustomize, onTargets }: {
+export default function Toolbar({ state, controller, onCustomize, onTargets, onActions }: {
   state: DashboardState;
   controller: ViewsController;
   onCustomize: () => void;
   onTargets: () => void;
+  onActions: () => void;
 }) {
   const { config, views, activeId } = state;
   const [dialog, setDialog] = useState<null | "saveAs" | "rename" | "delete">(null);
@@ -129,6 +131,8 @@ export default function Toolbar({ state, controller, onCustomize, onTargets }: {
         <div className="flex flex-wrap items-center gap-2">
           <button type="button" onClick={onCustomize} className={button}>Customize tables</button>
           <button type="button" onClick={onTargets} className={button}>Targets</button>
+          <button type="button" onClick={onActions} className={button}>Action list</button>
+          <AiToggle />
           <details className="relative">
             <summary className={`${button} cursor-pointer list-none`} aria-label="View options">{"⋯"}</summary>
             <div className="absolute right-0 z-20 mt-1 w-48 rounded-xl border border-line bg-surface p-1 shadow-card">
